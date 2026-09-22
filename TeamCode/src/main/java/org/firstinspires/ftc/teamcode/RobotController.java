@@ -2,15 +2,27 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.internal.webserver.websockets.CommandNotImplementedException;
+
 abstract public class RobotController extends LinearOpMode {
+    /** Enum representing our color. */
+    public enum AllianceColor {
+        Blue,
+        Red
+    }
+
     /** Enum representing the two physical bots we have. */
     public enum BotIdentity {
         Bernard,
         Gladys
     }
 
+    public static AllianceColor allianceColor;
+
     /** Return which bot we are running on. */
-    abstract BotIdentity getIdentity();
+    BotIdentity getIdentity() {
+        throw new UnsupportedOperationException("not yet");
+    }
 
     /** Switch a constant between two values based on what robot we are running this on. */
     protected final <T> T switchOnBot(T bernardValue, T gladysValue) {
