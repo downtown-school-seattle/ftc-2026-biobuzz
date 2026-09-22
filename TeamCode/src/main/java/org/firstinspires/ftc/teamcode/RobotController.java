@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 abstract public class RobotController extends LinearOpMode {
 
     public static final String BernardHost = "NULL";
-    public static final String GladysHost = "NULL";
+    // public static final String GladysHost = "NULL";
 
     public static String getLocalHost() {
         try {
@@ -23,8 +23,7 @@ abstract public class RobotController extends LinearOpMode {
     /** Enum representing the two physical bots we have. */
     public enum BotIdentity {
         Bernard,
-        Gladys,
-        Unknown
+        Gladys
     }
 
     /** Return which bot we are running on. */
@@ -33,13 +32,9 @@ abstract public class RobotController extends LinearOpMode {
             System.out.println("Bernard: " + getLocalHost());
             return BotIdentity.Bernard;
         }
-        if (Objects.equals(getLocalHost(), GladysHost)) {
+        else {
             System.out.println("Gladys: " + getLocalHost());
             return BotIdentity.Gladys;
-        }
-        else {
-            System.out.println(getLocalHost());
-            return BotIdentity.Unknown;
         }
     }
 
