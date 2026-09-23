@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.teleop;
+package org.firstinspires.ftc.teamcode.tele;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="Blue TeleOp", group="Robot")
-public class BlueTeleOp extends TeleOpMode {
+public class BlueTeleController extends TeleController {
     @Override
     public AllianceColor getAllianceColor() {
         return AllianceColor.Blue;
