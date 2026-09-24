@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.internal.webserver.websockets.CommandNotImplementedException;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
     /** Enum representing our color. */
@@ -31,5 +32,19 @@ abstract public class RobotController extends LinearOpMode {
             case Gladys: return gladysValue;
         }
         throw new Error("Constant not defined for bot identity.");
+    }
+
+    public GoBildaPinpointDriver pinpoint;
+    //pinpoint sensor stuff below
+    public void configurePinpoint() {
+        //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
+        pinpoint.setOffsets(0, 0, DistanceUnit.MM);
+        //change to pinpoint sensor type if not the same as old robot
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        // should not need changing
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        //does something important before starting the robot
+        pinpoint.resetPosAndIMU();
     }
 }
