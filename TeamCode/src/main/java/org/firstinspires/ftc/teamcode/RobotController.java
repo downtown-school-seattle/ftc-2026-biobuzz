@@ -6,6 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
+    public GoBildaPinpointDriver pinpoint;
+
+    public void initRobotController() {
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        configurePinpoint();
+
+    }
     /** Enum representing our color. */
     public enum AllianceColor {
         Blue,
@@ -34,7 +41,7 @@ abstract public class RobotController extends LinearOpMode {
         throw new Error("Constant not defined for bot identity.");
     }
 
-    public GoBildaPinpointDriver pinpoint;
+
     //pinpoint sensor stuff below
     public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
