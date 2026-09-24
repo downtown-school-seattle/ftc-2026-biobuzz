@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.RobotController;
 abstract public class TeleOpController extends RobotController {
     @Override
     public void runOpMode() {
-        initRobotController();
+//        initRobotController();
+        telemetry.addLine("Test msg");
+        telemetry.update();
     }
 }
