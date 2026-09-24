@@ -13,7 +13,7 @@ abstract public class RobotController extends LinearOpMode {
 
     public static String getLocalHost() {
         try {
-            InetAddress localHost = InetAddress.getLocalHost();
+            NetworkAddress localHost = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
             return localHost.getHostName();
         } catch (UnknownHostException e) {
             return "Unknown Host: " + e.getMessage();
