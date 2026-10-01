@@ -2,15 +2,30 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
+    public DcMotor FrontLeftDrive;
+    public DcMotor FrontRightDrive;
+    public DcMotor BackLeftDrive;
+    public DcMotor BackRightDrive;
 
     public void initRobotController() {
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-        configurePinpoint();
+
+//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+//        configurePinpoint();
+
+        /// Port 0
+        FrontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
+        /// Port 1
+        FrontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
+        /// Port 2
+        BackLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
+        /// Port 3
+        BackRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
     }
     /** Enum representing our color. */

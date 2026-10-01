@@ -4,12 +4,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotController;
 
-@TeleOp
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+
 abstract public class TeleOpController extends RobotController {
     @Override
     public void runOpMode() {
-//        initRobotController();
-        telemetry.addLine("Test msg");
-        telemetry.update();
+        initRobotController();
+        FrontLeftDrive.setPower(1);
+        waitForStart();
     }
 }
