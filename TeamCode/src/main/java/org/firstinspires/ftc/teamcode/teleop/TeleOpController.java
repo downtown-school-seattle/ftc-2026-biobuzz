@@ -18,10 +18,10 @@ abstract public class TeleOpController extends RobotController {
     }
 
     private void loopIteration() {
-        float forwardAxis = gamepad1.left_stick_y;
-        float rightAxis = gamepad1.left_stick_x;
-        FrontLeftDrive.setPower();
+        drive(gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+
     }
+
 
 
 }
