@@ -24,11 +24,8 @@ abstract public class AutoController extends RobotController {
     @Override
     public void runOpMode() {
         initRobotController();
-        // Set so a positive command drives each wheel "forward" (back wheels are wired opposite to the fronts).
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         for (DcMotor m : motors()) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
@@ -38,17 +35,18 @@ abstract public class AutoController extends RobotController {
     protected void drive(Direction direction, double inches) {
         double ticks = inches * ticksPerInch;
         switch (direction) {
-            case FORWARD: move("Drive FORWARD " + inches + " in", ticks, ticks, ticks, ticks); break;
-            case BACK:    move("Drive BACK " + inches + " in", -ticks, -ticks, -ticks, -ticks); break;
-            case RIGHT:   ticks *= strafeMultiplier; move("Strafe RIGHT " + inches + " in", ticks, -ticks, -ticks, ticks); break;
-            case LEFT:    ticks *= strafeMultiplier; move("Strafe LEFT " + inches + " in", -ticks, ticks, ticks, -ticks); break;
+            // back wheels (bl, br) are negated vs. standard mecanum signs; front wheels (fl, fr) are standard
+            case FORWARD: move("Drive FORWARD " + inches + " in", ticks, ticks, -ticks, -ticks); break;
+            case BACK:    move("Drive BACK " + inches + " in", -ticks, -ticks, ticks, ticks); break;
+            case RIGHT:   ticks *= strafeMultiplier; move("Strafe RIGHT " + inches + " in", ticks, -ticks, ticks, -ticks); break;
+            case LEFT:    ticks *= strafeMultiplier; move("Strafe LEFT " + inches + " in", -ticks, ticks, -ticks, ticks); break;
         }
     }
 
     // turn (degrees)
     protected void turn(double degrees) {
         double t = degrees * ticksPerDegree;
-        move("Turn " + degrees + " deg", t, -t, t, -t);
+        move("Turn " + degrees + " deg", t, -t, -t, t);
     }
 
     // wheel independant
