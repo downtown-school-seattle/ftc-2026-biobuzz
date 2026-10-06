@@ -9,7 +9,6 @@ public class RedAutoMode extends AutoController {
         return AllianceColor.Red;
     }
 
-    /** Mirror of the Blue test path (left/right and turns swapped). */
     @Override
     protected void runAuto() {
         drive(FORWARD, 24);

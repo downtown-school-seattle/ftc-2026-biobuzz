@@ -8,8 +8,6 @@ public class BlueAutoMode extends AutoController {
     public AllianceColor getAllianceColor() {
         return AllianceColor.Blue;
     }
-
-    /** Blue is the testing environment for now: drive each direction, then turn both ways. */
     @Override
     protected void runAuto() {
         drive(FORWARD, 24);
