@@ -13,7 +13,7 @@ abstract public class TeleOpController extends RobotController {
     @Override
     public void runOpMode() {
         initRobotController();
-        FrontLeftDrive.setPower(1);
+        frontLeftDrive.setPower(1);
         waitForStart();
     }
 }

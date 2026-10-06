@@ -8,10 +8,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
-    public DcMotor FrontLeftDrive;
-    public DcMotor FrontRightDrive;
-    public DcMotor BackLeftDrive;
-    public DcMotor BackRightDrive;
+    public DcMotor frontLeftDrive;
+    public DcMotor frontRightDrive;
+    public DcMotor backLeftDrive;
+    public DcMotor backRightDrive;
 
     public void initRobotController() {
 
@@ -19,13 +19,13 @@ abstract public class RobotController extends LinearOpMode {
 //        configurePinpoint();
 
         /// Port 0
-        FrontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
         /// Port 1
-        FrontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
         /// Port 2
-        BackLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         /// Port 3
-        BackRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
     }
     /** Enum representing our color. */
