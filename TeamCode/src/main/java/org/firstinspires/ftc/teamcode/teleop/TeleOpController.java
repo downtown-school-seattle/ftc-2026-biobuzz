@@ -13,7 +13,15 @@ abstract public class TeleOpController extends RobotController {
     @Override
     public void runOpMode() {
         initRobotController();
-        FrontLeftDrive.setPower(1);
         waitForStart();
+        while (true) loopIteration();
     }
+
+    private void loopIteration() {
+        float forwardAxis = gamepad1.left_stick_y;
+        float rightAxis = gamepad1.left_stick_x;
+        FrontLeftDrive.setPower();
+    }
+
+
 }
