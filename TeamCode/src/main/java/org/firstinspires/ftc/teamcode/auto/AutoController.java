@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.RobotController;
@@ -31,11 +32,51 @@ abstract public class AutoController extends RobotController {
         waitForStart();
         if (opModeIsActive()) runAuto();
     }
+    // TEMPORARY: time-based testing. drive/turn take SECONDS. Encoder/inches version is commented out below.
+    // drive (seconds)
+    protected void drive(Direction direction, double seconds) {
+        double p = power;
+        switch (direction) {
+            // back wheels (bl, br) are negated vs. standard mecanum signs; front wheels (fl, fr) are standard
+            case FORWARD: move("Drive FORWARD " + seconds + " s", seconds, p, p, -p, -p); break;
+            case BACK:    move("Drive BACK " + seconds + " s", seconds, -p, -p, p, p); break;
+            case RIGHT:   move("Strafe RIGHT " + seconds + " s", seconds, p, -p, p, -p); break;
+            case LEFT:    move("Strafe LEFT " + seconds + " s", seconds, -p, p, -p, p); break;
+        }
+    }
+
+    // turn (seconds): positive = clockwise, negative = counter-clockwise
+    protected void turn(double seconds) {
+        double p = power * Math.signum(seconds);
+        move("Turn " + seconds + " s", Math.abs(seconds), p, -p, -p, p);
+    }
+
+    // wheel independant, runs for a set time
+    private void move(String action, double seconds, double fl, double fr, double bl, double br) {
+        DcMotor[] motors = motors();
+        double[] powers = {fl, fr, bl, br};
+        RobotLog.ii("AutoController", "Starting: " + action);
+        ElapsedTime timer = new ElapsedTime();
+        for (int i = 0; i < 4; i++) {
+            motors[i].setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motors[i].setPower(powers[i]);
+        }
+        while (opModeIsActive() && timer.seconds() < seconds) {
+            telemetry.addData("Doing", action);
+            telemetry.addData("Elapsed", "%.2f / %.2f s", timer.seconds(), seconds);
+            telemetry.addData("Powers fl/fr/bl/br", "%.2f %.2f %.2f %.2f", fl, fr, bl, br);
+            telemetry.update();
+            idle();
+        }
+        for (DcMotor m : motors) m.setPower(0);
+        RobotLog.ii("AutoController", "Finished: " + action);
+    }
+
+    /* ---- Encoder-based version (inches / degrees), re-enable when done testing ----
     // drive (inches)
     protected void drive(Direction direction, double inches) {
         double ticks = inches * ticksPerInch;
         switch (direction) {
-            // back wheels (bl, br) are negated vs. standard mecanum signs; front wheels (fl, fr) are standard
             case FORWARD: move("Drive FORWARD " + inches + " in", ticks, ticks, -ticks, -ticks); break;
             case BACK:    move("Drive BACK " + inches + " in", -ticks, -ticks, ticks, ticks); break;
             case RIGHT:   ticks *= strafeMultiplier; move("Strafe RIGHT " + inches + " in", ticks, -ticks, ticks, -ticks); break;
@@ -73,12 +114,13 @@ abstract public class AutoController extends RobotController {
         RobotLog.ii("AutoController", "Finished: " + action);
     }
 
-    private DcMotor[] motors() {
-        return new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
-    }
-
     private boolean anyBusy(DcMotor[] motors) {
         for (DcMotor m : motors) if (m.isBusy()) return true;
         return false;
+    }
+    ---- end encoder-based version ---- */
+
+    private DcMotor[] motors() {
+        return new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
     }
 }

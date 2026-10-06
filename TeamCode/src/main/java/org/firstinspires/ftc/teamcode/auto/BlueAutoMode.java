@@ -10,11 +10,11 @@ public class BlueAutoMode extends AutoController {
     }
     @Override
     protected void runAuto() {
-        drive(FORWARD, 24);
-        drive(RIGHT, 24);
-        drive(BACK, 24);
-        drive(LEFT, 24);
-        turn(90);
-        turn(-90);
+        drive(FORWARD, 1);
+        drive(RIGHT, 1);
+        drive(BACK, 1);
+        drive(LEFT, 1);
+        turn(0.5);
+        turn(-0.5);
     }
 }
