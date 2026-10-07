@@ -16,5 +16,7 @@ public class BlueAutoMode extends AutoController {
         drive(LEFT, 24);
         turn(180);
         turn(-90);
+        // Simultaneous example: drive while motor 5 runs
+        // run(driveCmd(FORWARD, 24), motor5Cmd(0.5, 2));
     }
 }

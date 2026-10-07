@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 /**
- * Controls the "#5" motor. Its hardware name comes from the robot configuration in the
- * Robot Controller / Driver Station app (Configure Robot -> pick the motor port -> name it
- * {@link #CONFIG_NAME}), so no code change is needed to move it to another port.
+ * Controls the "#5" motor: motor port 0 on the Expansion Hub. The port is chosen in the robot
+ * configuration in the Robot Controller / Driver Station app (Configure Robot -> Expansion Hub ->
+ * Motors -> port 0 -> name it {@link #CONFIG_NAME}), so moving it to another port needs no code change.
  */
 public class Motor5 {
     /** Name this motor must be given in the Configure Robot screen. */
