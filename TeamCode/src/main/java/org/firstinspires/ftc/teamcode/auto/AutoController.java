@@ -16,8 +16,9 @@ abstract public class AutoController extends RobotController {
     // default settings
     protected double ticksPerInch = 40;       // ticks per inch
     protected double ticksPerDegree = 10;     // ticks per wheel degree
-    protected double strafeMultiplier = 1.1;  // for sliding error and shit
     protected double power = 0.5;
+    protected int tolerance = 15;             // ticks from target that counts as "arrived"
+    protected double moveTimeoutSeconds = 5;  // give up on a move after this long
 
     // auto here
     protected void runAuto() {}
@@ -32,7 +33,9 @@ abstract public class AutoController extends RobotController {
         waitForStart();
         if (opModeIsActive()) runAuto();
     }
-    // TEMPORARY: time-based testing. drive/turn take SECONDS. Encoder/inches version is commented out below.
+    // DEPRICATED: time based driving drive/turn take SECONDS
+    /*
+    // encoder/inches version is commented out below.
     // drive (seconds)
     protected void drive(Direction direction, double seconds) {
         double p = power;
@@ -40,15 +43,15 @@ abstract public class AutoController extends RobotController {
             // back wheels (bl, br) are negated vs. standard mecanum signs; front wheels (fl, fr) are standard
             case FORWARD: move("Drive FORWARD " + seconds + " s", seconds, p, p, -p, -p); break;
             case BACK:    move("Drive BACK " + seconds + " s", seconds, -p, -p, p, p); break;
-            case RIGHT:   move("Strafe RIGHT " + seconds + " s", seconds, p, -p, p, -p); break;
-            case LEFT:    move("Strafe LEFT " + seconds + " s", seconds, -p, p, -p, p); break;
+            case RIGHT:   move("Strafe RIGHT " + seconds + " s", seconds, p, p, p, p); break;
+            case LEFT:    move("Strafe LEFT " + seconds + " s", seconds, -p, -p, -p, -p); break;
         }
     }
 
     // turn (seconds): positive = clockwise, negative = counter-clockwise
     protected void turn(double seconds) {
         double p = power * Math.signum(seconds);
-        move("Turn " + seconds + " s", Math.abs(seconds), p, -p, -p, p);
+        move("Turn " + seconds + " s", Math.abs(seconds), -p, p, -p, p);
     }
 
     // wheel independant, runs for a set time
@@ -71,23 +74,24 @@ abstract public class AutoController extends RobotController {
         for (DcMotor m : motors) m.setPower(0);
         RobotLog.ii("AutoController", "Finished: " + action);
     }
+    */
 
-    /* ---- Encoder-based version (inches / degrees), re-enable when done testing ----
+    // encoder version (broken) inches / degrees
     // drive (inches)
     protected void drive(Direction direction, double inches) {
         double ticks = inches * ticksPerInch;
         switch (direction) {
             case FORWARD: move("Drive FORWARD " + inches + " in", ticks, ticks, -ticks, -ticks); break;
             case BACK:    move("Drive BACK " + inches + " in", -ticks, -ticks, ticks, ticks); break;
-            case RIGHT:   ticks *= strafeMultiplier; move("Strafe RIGHT " + inches + " in", ticks, -ticks, ticks, -ticks); break;
-            case LEFT:    ticks *= strafeMultiplier; move("Strafe LEFT " + inches + " in", -ticks, ticks, -ticks, ticks); break;
+            case RIGHT:   move("Strafe RIGHT " + inches + " in", ticks, ticks, ticks, ticks); break;
+            case LEFT:    move("Strafe LEFT " + inches + " in", -ticks, -ticks, -ticks, -ticks); break;
         }
     }
 
     // turn (degrees)
     protected void turn(double degrees) {
         double t = degrees * ticksPerDegree;
-        move("Turn " + degrees + " deg", t, -t, -t, t);
+        move("Turn " + degrees + " deg", -t, t, -t, t);
     }
 
     // wheel independant
@@ -101,7 +105,12 @@ abstract public class AutoController extends RobotController {
             motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motors[i].setPower(power);
         }
-        while (opModeIsActive() && anyBusy(motors)) {
+        ElapsedTime timer = new ElapsedTime();
+        while (opModeIsActive() && !reachedTargets(motors)) {
+            if (timer.seconds() > moveTimeoutSeconds) {
+                RobotLog.ee("AutoController", "Timed out (target never reached): " + action);
+                break;
+            }
             telemetry.addData("Doing", action);
             telemetry.addData("fl", motors[0].getCurrentPosition() + " / " + motors[0].getTargetPosition());
             telemetry.addData("fr", motors[1].getCurrentPosition() + " / " + motors[1].getTargetPosition());
@@ -110,15 +119,21 @@ abstract public class AutoController extends RobotController {
             telemetry.update();
             idle();
         }
-        for (DcMotor m : motors) m.setPower(0);
+        // Destination reached: cut power and drop the held target so the next move starts clean.
+        for (DcMotor m : motors) {
+            m.setPower(0);
+            m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
         RobotLog.ii("AutoController", "Finished: " + action);
     }
 
-    private boolean anyBusy(DcMotor[] motors) {
-        for (DcMotor m : motors) if (m.isBusy()) return true;
-        return false;
+    /** True once every wheel is within tolerance of its own target (doesn't rely on isBusy). */
+    private boolean reachedTargets(DcMotor[] motors) {
+        for (DcMotor m : motors) {
+            if (Math.abs(m.getTargetPosition() - m.getCurrentPosition()) > tolerance) return false;
+        }
+        return true;
     }
-    ---- end encoder-based version ---- */
 
     private DcMotor[] motors() {
         return new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
