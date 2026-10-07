@@ -4,22 +4,18 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-/**
- * Controls the "#5" motor: motor port 0 on the Expansion Hub. The port is chosen in the robot
- * configuration in the Robot Controller / Driver Station app (Configure Robot -> Expansion Hub ->
- * Motors -> port 0 -> name it {@link #CONFIG_NAME}), so moving it to another port needs no code change.
- */
-public class Motor5 {
+
+public class Motor0e {
     /** Name this motor must be given in the Configure Robot screen. */
     public static final String CONFIG_NAME = "motor_5";
 
     private final DcMotor motor;
 
-    public Motor5(HardwareMap hardwareMap) {
+    public Motor0e(HardwareMap hardwareMap) {
         this(hardwareMap, CONFIG_NAME);
     }
 
-    public Motor5(HardwareMap hardwareMap, String configName) {
+    public Motor0e(HardwareMap hardwareMap, String configName) {
         motor = hardwareMap.get(DcMotor.class, configName);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
