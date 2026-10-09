@@ -29,4 +29,4 @@ run(driveCmd(180, 18), turnCmd(30), motorCmd(motor0e, 4000))
 ## コントリビューターズ
 
 - ヘンドリックス C.
-- キーラン B.
+- Kieran B.
