@@ -3,5 +3,5 @@ package org.firstinspires.ftc.teamcode.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name="テレ", group="ロボット")
-public class TeleOpMode extends TeleOpController {
+public class テレオプモード extends テレオプコントローラー {
 }

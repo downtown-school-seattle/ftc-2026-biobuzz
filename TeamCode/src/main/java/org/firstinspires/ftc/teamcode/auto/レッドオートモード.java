@@ -3,10 +3,10 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="レッド", group="ロボット")
-public class RedAutoMode extends AutoController {
+public class レッドオートモード extends オートコントローラー {
     @Override
-    public AllianceColor getAllianceColor() {
-        return AllianceColor.Red;
+    public アライアンスカラー getAllianceColor() {
+        return アライアンスカラー.Red;
     }
 
     @Override

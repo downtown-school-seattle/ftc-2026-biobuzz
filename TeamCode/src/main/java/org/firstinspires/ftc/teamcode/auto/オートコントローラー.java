@@ -6,13 +6,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Motor0e;
-import org.firstinspires.ftc.teamcode.RobotController;
+import org.firstinspires.ftc.teamcode.モーターゼロイー;
+import org.firstinspires.ftc.teamcode.ロボットコントローラー;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-abstract public class AutoController extends RobotController {
+abstract public class オートコントローラー extends ロボットコントローラー {
     private static final String タグ = "オートコントローラー";
     private static final double ミンムービングアールピーエム = 5;
     private static final String[] ホイールズ = {"エフエル", "エフアール", "ビーエル", "ビーアール"};
@@ -34,9 +34,9 @@ abstract public class AutoController extends RobotController {
     protected static final String motor2e = "motor2e";
     protected static final String motor3e = "motor3e";
 
-    private final Map<String, Motor0e> エクスパンションモーターズ = new LinkedHashMap<>();
+    private final Map<String, モーターゼロイー> エクスパンションモーターズ = new LinkedHashMap<>();
 
-    abstract public AllianceColor getAllianceColor();
+    abstract public アライアンスカラー getAllianceColor();
 
     protected void runAuto() {}
 
@@ -50,7 +50,7 @@ abstract public class AutoController extends RobotController {
 
         waitForStart();
         if (opModeIsActive()) runAuto();
-        for (Motor0e エム : エクスパンションモーターズ.values()) エム.stop();
+        for (モーターゼロイー エム : エクスパンションモーターズ.values()) エム.stop();
     }
 
     protected void drive(double デグリーズ, double インチズ) {
@@ -61,37 +61,37 @@ abstract public class AutoController extends RobotController {
         run(turnCmd(デグリーズ));
     }
 
-    protected AutoCommand driveCmd(double デグリーズ, double インチズ) {
+    protected オートコマンド driveCmd(double デグリーズ, double インチズ) {
         double ラジアンズ = Math.toRadians(デグリーズ);
         double フォワード = Math.cos(ラジアンズ) * インチズ * ティックスパーインチ;
         double ライト = Math.sin(ラジアンズ) * インチズ * ティックスパーインチ;
         String ネーム = "ドライブ " + デグリーズ + " デグ " + インチズ + " イン";
-        return new MoveCommand(ネーム, フォワード + ライト, フォワード + ライト, ライト - フォワード, ライト - フォワード);
+        return new ムーブコマンド(ネーム, フォワード + ライト, フォワード + ライト, ライト - フォワード, ライト - フォワード);
     }
 
-    protected AutoCommand turnCmd(double デグリーズ) {
+    protected オートコマンド turnCmd(double デグリーズ) {
         double ティー = デグリーズ * ティックスパーデグリー;
-        return new MoveCommand("ターン " + デグリーズ + " デグ", -ティー, ティー, -ティー, ティー);
+        return new ムーブコマンド("ターン " + デグリーズ + " デグ", -ティー, ティー, -ティー, ティー);
     }
 
-    protected AutoCommand motorCmd(String コンフィグネーム, double アールピーエム) {
-        return new MotorCommand(コンフィグネーム, アールピーエム);
+    protected オートコマンド motorCmd(String コンフィグネーム, double アールピーエム) {
+        return new モーターコマンド(コンフィグネーム, アールピーエム);
     }
 
-    protected void run(AutoCommand... コマンズ) {
+    protected void run(オートコマンド... コマンズ) {
         int ムーブズ = 0;
-        for (AutoCommand シー : コマンズ) if (シー instanceof MoveCommand) ムーブズ++;
+        for (オートコマンド シー : コマンズ) if (シー instanceof ムーブコマンド) ムーブズ++;
         if (ムーブズ > 1) throw new IllegalArgumentException("オンリー ワン ターン コマンド キャン ラン イン ア グループ。");
 
-        for (AutoCommand シー : コマンズ) シー.start();
+        for (オートコマンド シー : コマンズ) シー.start();
         while (opModeIsActive()) {
             boolean オールダン = true;
-            for (AutoCommand シー : コマンズ) {
+            for (オートコマンド シー : コマンズ) {
                 if (シー.isDone()) continue;
                 シー.update();
                 オールダン = false;
             }
-            for (Motor0e エム : エクスパンションモーターズ.values()) {
+            for (モーターゼロイー エム : エクスパンションモーターズ.values()) {
                 エム.update();
                 エム.addTelemetry(telemetry);
             }
@@ -99,25 +99,25 @@ abstract public class AutoController extends RobotController {
             if (オールダン) break;
             idle();
         }
-        for (AutoCommand シー : コマンズ) シー.end();
+        for (オートコマンド シー : コマンズ) シー.end();
     }
 
-    private Motor0e expansionMotor(String コンフィグネーム) {
-        Motor0e エム = エクスパンションモーターズ.get(コンフィグネーム);
+    private モーターゼロイー expansionMotor(String コンフィグネーム) {
+        モーターゼロイー エム = エクスパンションモーターズ.get(コンフィグネーム);
         if (エム == null) {
-            エム = new Motor0e(hardwareMap, コンフィグネーム);
+            エム = new モーターゼロイー(hardwareMap, コンフィグネーム);
             エクスパンションモーターズ.put(コンフィグネーム, エム);
         }
         return エム;
     }
 
-    private class MoveCommand implements AutoCommand {
+    private class ムーブコマンド implements オートコマンド {
         private final String ネーム;
         private final double[] ターゲッツ;
         private final ElapsedTime タイマー = new ElapsedTime();
         private boolean タイムドアウト = false;
 
-        MoveCommand(String ネーム, double... ターゲッツ) {
+        ムーブコマンド(String ネーム, double... ターゲッツ) {
             this.ネーム = ネーム;
             this.ターゲッツ = ターゲッツ;
         }
@@ -162,11 +162,11 @@ abstract public class AutoController extends RobotController {
         }
     }
 
-    private class MotorCommand implements AutoCommand {
+    private class モーターコマンド implements オートコマンド {
         private final String コンフィグネーム;
         private final double アールピーエム;
 
-        MotorCommand(String コンフィグネーム, double アールピーエム) {
+        モーターコマンド(String コンフィグネーム, double アールピーエム) {
             this.コンフィグネーム = コンフィグネーム;
             this.アールピーエム = アールピーエム;
         }

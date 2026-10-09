@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-abstract public class RobotController extends LinearOpMode {
+abstract public class ロボットコントローラー extends LinearOpMode {
     public GoBildaPinpointDriver ピンポイント;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
@@ -20,18 +20,18 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "motor3");
     }
 
-    public enum AllianceColor {
+    public enum アライアンスカラー {
         Blue,
         Red
     }
 
-    public enum BotIdentity {
+    public enum ボットアイデンティティ {
         Bernard,
         Gladys
     }
 
     /** Return which bot we are running on. */
-    BotIdentity getIdentity() {
+    ボットアイデンティティ getIdentity() {
         throw new UnsupportedOperationException("ノット イェット");
     }
 

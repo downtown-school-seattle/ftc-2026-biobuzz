@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayDeque;
 
-public class Motor0e {
+public class モーターゼロイー {
     public static final String CONFIG_NAME = "motor0e";
     public static final double フリースピードアールピーエム = 6000;
     public static final double ミンアールピーエム = 3000;
@@ -42,11 +42,11 @@ public class Motor0e {
     private double コマンデッドパワー = 0;
     private String ディップサマリー = "";
 
-    public Motor0e(HardwareMap ハードウェアマップ) {
+    public モーターゼロイー(HardwareMap ハードウェアマップ) {
         this(ハードウェアマップ, CONFIG_NAME);
     }
 
-    public Motor0e(HardwareMap ハードウェアマップ, String コンフィグネーム) {
+    public モーターゼロイー(HardwareMap ハードウェアマップ, String コンフィグネーム) {
         motor = ハードウェアマップ.get(DcMotorEx.class, コンフィグネーム);
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -111,7 +111,7 @@ public class Motor0e {
                 ドロッピング = false;
                 ヒストリー.clear();
                 ディップサマリー = String.format("ディップ %.0f -> ロー %.0f アールピーエム、バック アップ イン %.2f エス", ドロップフロムアールピーエム, ロウエストアールピーエム, イラプスド);
-                RobotLog.ii("Motor0e", ディップサマリー);
+                RobotLog.ii("モーターゼロイー", ディップサマリー);
             } else {
                 ディップサマリー = String.format("ディップ %.0f -> ロー %.0f アールピーエム、リカバリング %.2f エス...", ドロップフロムアールピーエム, ロウエストアールピーエム, イラプスド);
             }

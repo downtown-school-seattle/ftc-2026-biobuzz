@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Motor0e;
-import org.firstinspires.ftc.teamcode.RobotController;
+import org.firstinspires.ftc.teamcode.モーターゼロイー;
+import org.firstinspires.ftc.teamcode.ロボットコントローラー;
 
-abstract public class TeleOpController extends RobotController {
+abstract public class テレオプコントローラー extends ロボットコントローラー {
     private static final double アールピーエムステップ = 100;
 
-    protected Motor0e shooter;
+    protected モーターゼロイー shooter;
 
     protected void initTeleOp() {
         initRobotController();
@@ -48,7 +48,7 @@ abstract public class TeleOpController extends RobotController {
 
     private void initShooter() {
         try {
-            shooter = new Motor0e(hardwareMap);
+            shooter = new モーターゼロイー(hardwareMap);
         } catch (IllegalArgumentException イー) {
             shooter = null;
         }
@@ -56,7 +56,7 @@ abstract public class TeleOpController extends RobotController {
 
     private void addShooterTelemetry() {
         if (shooter == null) {
-            telemetry.addData("motor0e", "ノット ファウンド イン ロボット コンフィグ アズ \"" + Motor0e.CONFIG_NAME + "\"");
+            telemetry.addData("motor0e", "ノット ファウンド イン ロボット コンフィグ アズ \"" + モーターゼロイー.CONFIG_NAME + "\"");
             return;
         }
         shooter.addTelemetry(telemetry);
