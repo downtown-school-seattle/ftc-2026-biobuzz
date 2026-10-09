@@ -78,7 +78,7 @@ abstract public class AutoController extends RobotController {
         return new MotorCommand(コンフィグネーム, アールピーエム);
     }
 
-    protected void run(AutoCommand... commands) {
+    protected void run(AutoCommand... コマンズ) {
         int ムーブズ = 0;
         for (AutoCommand シー : コマンズ) if (シー instanceof MoveCommand) ムーブズ++;
         if (ムーブズ > 1) throw new IllegalArgumentException("オンリー ワン ターン コマンド キャン ラン イン ア グループ。");
@@ -117,7 +117,7 @@ abstract public class AutoController extends RobotController {
         private final ElapsedTime タイマー = new ElapsedTime();
         private boolean タイムドアウト = false;
 
-        MoveCommand(String ネーム, double... targets) {
+        MoveCommand(String ネーム, double... ターゲッツ) {
             this.ネーム = ネーム;
             this.ターゲッツ = ターゲッツ;
         }
