@@ -1,3 +1,6 @@
+# DO NOT TOUCH IF YOU ARE NOT HENDRIX OR KIERAN FOR NOW THANK YOU
+
+
 # FTC 26-27 BioBuzz
 
 this is hendrix's branch of the code for the Downtown School's 2026-2027 robotics season
