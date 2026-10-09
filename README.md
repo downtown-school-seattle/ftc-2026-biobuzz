@@ -1,4 +1,4 @@
-# FTC 2026-27 BioBuzz
+# FTC 26-27 BioBuzz
 
 this is hendrix's branch of the code for the Downtown School's 2026-2027 robotics season
 
