@@ -13,28 +13,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 abstract public class AutoController extends RobotController {
-    private static final String TAG = "AutoController";
-    private static final double MIN_MOVING_RPM = 5;
-    private static final String[] WHEELS = {"fl", "fr", "bl", "br"};
+    private static final String タグ = "オートコントローラー";
+    private static final double ミンムービングアールピーエム = 5;
+    private static final String[] ホイールズ = {"エフエル", "エフアール", "ビーエル", "ビーアール"};
 
-    public static final double FORWARD = 0;
-    public static final double RIGHT = 90;
-    public static final double BACK = 180;
-    public static final double LEFT = 270;
+    public static final double フォワードホウコウ = 0;
+    public static final double ライトホウコウ = 90;
+    public static final double バックホウコウ = 180;
+    public static final double レフトホウコウ = 270;
 
-    protected double ticksPerInch = 40;
-    protected double ticksPerDegree = 10;
-    protected double wheelTicksPerRev = 537.7;
-    protected double power = 0.5;
-    protected int tolerance = 15;
-    protected double moveTimeoutSeconds = 5;
+    protected double ティックスパーインチ = 40;
+    protected double ティックスパーデグリー = 10;
+    protected double ホイールティックスパーレブ = 537.7;
+    protected double パワー = 0.5;
+    protected int トレランス = 15;
+    protected double ムーブタイムアウトセカンズ = 5;
 
     protected static final String motor0e = "motor0e";
     protected static final String motor1e = "motor1e";
     protected static final String motor2e = "motor2e";
     protected static final String motor3e = "motor3e";
 
-    private final Map<String, Motor0e> expansionMotors = new LinkedHashMap<>();
+    private final Map<String, Motor0e> エクスパンションモーターズ = new LinkedHashMap<>();
 
     abstract public AllianceColor getAllianceColor();
 
@@ -46,138 +46,138 @@ abstract public class AutoController extends RobotController {
         initRobotController();
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        for (DcMotor m : motors()) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        for (DcMotor エム : モーターズ()) エム.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
         if (opModeIsActive()) runAuto();
-        for (Motor0e m : expansionMotors.values()) m.stop();
+        for (Motor0e エム : エクスパンションモーターズ.values()) エム.stop();
     }
 
-    protected void drive(double degrees, double inches) {
-        run(driveCmd(degrees, inches));
+    protected void drive(double デグリーズ, double インチズ) {
+        run(driveCmd(デグリーズ, インチズ));
     }
 
-    protected void turn(double degrees) {
-        run(turnCmd(degrees));
+    protected void turn(double デグリーズ) {
+        run(turnCmd(デグリーズ));
     }
 
-    protected AutoCommand driveCmd(double degrees, double inches) {
-        double radians = Math.toRadians(degrees);
-        double forward = Math.cos(radians) * inches * ticksPerInch;
-        double right = Math.sin(radians) * inches * ticksPerInch;
-        String name = "drive " + degrees + " deg " + inches + " in";
-        return new MoveCommand(name, forward + right, forward + right, right - forward, right - forward);
+    protected AutoCommand driveCmd(double デグリーズ, double インチズ) {
+        double ラジアンズ = Math.toRadians(デグリーズ);
+        double フォワード = Math.cos(ラジアンズ) * インチズ * ティックスパーインチ;
+        double ライト = Math.sin(ラジアンズ) * インチズ * ティックスパーインチ;
+        String ネーム = "ドライブ " + デグリーズ + " デグ " + インチズ + " イン";
+        return new MoveCommand(ネーム, フォワード + ライト, フォワード + ライト, ライト - フォワード, ライト - フォワード);
     }
 
-    protected AutoCommand turnCmd(double degrees) {
-        double t = degrees * ticksPerDegree;
-        return new MoveCommand("turn " + degrees + " deg", -t, t, -t, t);
+    protected AutoCommand turnCmd(double デグリーズ) {
+        double ティー = デグリーズ * ティックスパーデグリー;
+        return new MoveCommand("ターン " + デグリーズ + " デグ", -ティー, ティー, -ティー, ティー);
     }
 
-    protected AutoCommand motorCmd(String configName, double rpm) {
-        return new MotorCommand(configName, rpm);
+    protected AutoCommand motorCmd(String コンフィグネーム, double アールピーエム) {
+        return new MotorCommand(コンフィグネーム, アールピーエム);
     }
 
     protected void run(AutoCommand... commands) {
-        int moves = 0;
-        for (AutoCommand c : commands) if (c instanceof MoveCommand) moves++;
-        if (moves > 1) throw new IllegalArgumentException("only one turn command can run in a group.");
+        int ムーブズ = 0;
+        for (AutoCommand シー : コマンズ) if (シー instanceof MoveCommand) ムーブズ++;
+        if (ムーブズ > 1) throw new IllegalArgumentException("オンリー ワン ターン コマンド キャン ラン イン ア グループ。");
 
-        for (AutoCommand c : commands) c.start();
+        for (AutoCommand シー : コマンズ) シー.start();
         while (opModeIsActive()) {
-            boolean allDone = true;
-            for (AutoCommand c : commands) {
-                if (c.isDone()) continue;
-                c.update();
-                allDone = false;
+            boolean オールダン = true;
+            for (AutoCommand シー : コマンズ) {
+                if (シー.isDone()) continue;
+                シー.update();
+                オールダン = false;
             }
-            for (Motor0e m : expansionMotors.values()) {
-                m.update();
-                m.addTelemetry(telemetry);
+            for (Motor0e エム : エクスパンションモーターズ.values()) {
+                エム.update();
+                エム.addTelemetry(telemetry);
             }
             telemetry.update();
-            if (allDone) break;
+            if (オールダン) break;
             idle();
         }
-        for (AutoCommand c : commands) c.end();
+        for (AutoCommand シー : コマンズ) シー.end();
     }
 
-    private Motor0e expansionMotor(String configName) {
-        Motor0e m = expansionMotors.get(configName);
-        if (m == null) {
-            m = new Motor0e(hardwareMap, configName);
-            expansionMotors.put(configName, m);
+    private Motor0e expansionMotor(String コンフィグネーム) {
+        Motor0e エム = エクスパンションモーターズ.get(コンフィグネーム);
+        if (エム == null) {
+            エム = new Motor0e(hardwareMap, コンフィグネーム);
+            エクスパンションモーターズ.put(コンフィグネーム, エム);
         }
-        return m;
+        return エム;
     }
 
     private class MoveCommand implements AutoCommand {
-        private final String name;
-        private final double[] targets;
-        private final ElapsedTime timer = new ElapsedTime();
-        private boolean timedOut = false;
+        private final String ネーム;
+        private final double[] ターゲッツ;
+        private final ElapsedTime タイマー = new ElapsedTime();
+        private boolean タイムドアウト = false;
 
-        MoveCommand(String name, double... targets) {
-            this.name = name;
-            this.targets = targets;
+        MoveCommand(String ネーム, double... targets) {
+            this.ネーム = ネーム;
+            this.ターゲッツ = ターゲッツ;
         }
 
         @Override
         public void start() {
-            RobotLog.ii(TAG, "starting: " + name);
-            DcMotor[] motors = motors();
-            double farthest = 0;
-            for (double t : targets) farthest = Math.max(farthest, Math.abs(t));
-            for (int i = 0; i < motors.length; i++) {
-                motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                motors[i].setTargetPosition((int) Math.round(targets[i]));
-                motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                motors[i].setPower(farthest == 0 ? 0 : power * Math.abs(targets[i]) / farthest);
+            RobotLog.ii(タグ, "スターティング: " + ネーム);
+            DcMotor[] モーターズ = モーターズ();
+            double ファーセスト = 0;
+            for (double ティー : ターゲッツ) ファーセスト = Math.max(ファーセスト, Math.abs(ティー));
+            for (int アイ = 0; アイ < モーターズ.length; アイ++) {
+                モーターズ[アイ].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                モーターズ[アイ].setTargetPosition((int) Math.round(ターゲッツ[アイ]));
+                モーターズ[アイ].setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                モーターズ[アイ].setPower(ファーセスト == 0 ? 0 : パワー * Math.abs(ターゲッツ[アイ]) / ファーセスト);
             }
-            timer.reset();
+            タイマー.reset();
         }
 
         @Override
         public void update() {
-            if (timer.seconds() > moveTimeoutSeconds) {
-                timedOut = true;
-                RobotLog.ee(TAG, "timed out: " + name);
+            if (タイマー.seconds() > ムーブタイムアウトセカンズ) {
+                タイムドアウト = true;
+                RobotLog.ee(タグ, "タイムド アウト: " + ネーム);
                 return;
             }
-            addWheelTelemetry(motors());
+            addWheelTelemetry(モーターズ());
         }
 
         @Override
         public boolean isDone() {
-            return timedOut || reachedTargets(motors());
+            return タイムドアウト || reachedTargets(モーターズ());
         }
 
         @Override
         public void end() {
-            for (DcMotor m : motors()) {
-                m.setPower(0);
-                m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            for (DcMotor エム : モーターズ()) {
+                エム.setPower(0);
+                エム.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
-            RobotLog.ii(TAG, "finished: " + name);
+            RobotLog.ii(タグ, "フィニッシュド: " + ネーム);
         }
     }
 
     private class MotorCommand implements AutoCommand {
-        private final String configName;
-        private final double rpm;
+        private final String コンフィグネーム;
+        private final double アールピーエム;
 
-        MotorCommand(String configName, double rpm) {
-            this.configName = configName;
-            this.rpm = rpm;
+        MotorCommand(String コンフィグネーム, double アールピーエム) {
+            this.コンフィグネーム = コンフィグネーム;
+            this.アールピーエム = アールピーエム;
         }
 
         @Override
         public void start() {
             try {
-                expansionMotor(configName).setRpm(rpm);
-                RobotLog.ii(TAG, "motor " + configName + " set to " + rpm + " rpm");
-            } catch (IllegalArgumentException e) {
-                RobotLog.ee(TAG, "motor not found in config: " + configName);
+                expansionMotor(コンフィグネーム).setRpm(アールピーエム);
+                RobotLog.ii(タグ, "モーター " + コンフィグネーム + " セット トゥ " + アールピーエム + " アールピーエム");
+            } catch (IllegalArgumentException イー) {
+                RobotLog.ee(タグ, "モーター ノット ファウンド イン コンフィグ: " + コンフィグネーム);
             }
         }
 
@@ -193,31 +193,31 @@ abstract public class AutoController extends RobotController {
         public void end() {}
     }
 
-    private void addWheelTelemetry(DcMotor[] motors) {
-        double[] rpm = new double[motors.length];
-        for (int i = 0; i < motors.length; i++) {
-            rpm[i] = ((DcMotorEx) motors[i]).getVelocity() / wheelTicksPerRev * 60;
-            telemetry.addData(WHEELS[i], "%.0f rpm", rpm[i]);
+    private void addWheelTelemetry(DcMotor[] モーターズ) {
+        double[] アールピーエム = new double[モーターズ.length];
+        for (int アイ = 0; アイ < モーターズ.length; アイ++) {
+            アールピーエム[アイ] = ((DcMotorEx) モーターズ[アイ]).getVelocity() / ホイールティックスパーレブ * 60;
+            telemetry.addData(ホイールズ[アイ], "%.0f アールピーエム", アールピーエム[アイ]);
         }
 
-        double forward = (rpm[0] + rpm[1] - rpm[2] - rpm[3]) / 4;
-        double right = (rpm[0] + rpm[1] + rpm[2] + rpm[3]) / 4;
-        if (Math.hypot(forward, right) < MIN_MOVING_RPM) {
-            telemetry.addData("direction", "-");
+        double フォワード = (アールピーエム[0] + アールピーエム[1] - アールピーエム[2] - アールピーエム[3]) / 4;
+        double ライト = (アールピーエム[0] + アールピーエム[1] + アールピーエム[2] + アールピーエム[3]) / 4;
+        if (Math.hypot(フォワード, ライト) < ミンムービングアールピーエム) {
+            telemetry.addData("ディレクション", "-");
         } else {
-            double degrees = (Math.toDegrees(Math.atan2(right, forward)) + 360) % 360;
-            telemetry.addData("direction", "%.0f deg (0 forward, 90 right)", degrees);
+            double デグリーズ = (Math.toDegrees(Math.atan2(ライト, フォワード)) + 360) % 360;
+            telemetry.addData("ディレクション", "%.0f デグ (0 フォワード, 90 ライト)", デグリーズ);
         }
     }
 
-    private boolean reachedTargets(DcMotor[] motors) {
-        for (DcMotor m : motors) {
-            if (Math.abs(m.getTargetPosition() - m.getCurrentPosition()) > tolerance) return false;
+    private boolean reachedTargets(DcMotor[] モーターズ) {
+        for (DcMotor エム : モーターズ) {
+            if (Math.abs(エム.getTargetPosition() - エム.getCurrentPosition()) > トレランス) return false;
         }
         return true;
     }
 
-    private DcMotor[] motors() {
+    private DcMotor[] モーターズ() {
         return new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
     }
 }

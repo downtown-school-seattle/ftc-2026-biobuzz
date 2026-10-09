@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name="red", group="Robot")
+@Autonomous(name="レッド", group="ロボット")
 public class RedAutoMode extends AutoController {
     @Override
     public AllianceColor getAllianceColor() {
@@ -11,12 +11,12 @@ public class RedAutoMode extends AutoController {
 
     @Override
     protected void runAuto() {
-        drive(FORWARD, 1);
-        drive(LEFT, 1);
-        drive(BACK, 1);
-        drive(RIGHT, 1);
+        drive(フォワードホウコウ, 1);
+        drive(レフトホウコウ, 1);
+        drive(バックホウコウ, 1);
+        drive(ライトホウコウ, 1);
         turn(-0.5);
         turn(0.5);
-        run(motorCmd(motor0e, 4000), driveCmd(LEFT, 18));
+        run(motorCmd(motor0e, 4000), driveCmd(レフトホウコウ, 18));
     }
 }

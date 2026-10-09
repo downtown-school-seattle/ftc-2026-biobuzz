@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.Motor0e;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 abstract public class TeleOpController extends RobotController {
-    private static final double RPM_STEP = 100;
+    private static final double アールピーエムステップ = 100;
 
     protected Motor0e shooter;
 
@@ -28,15 +28,15 @@ abstract public class TeleOpController extends RobotController {
         if (isStopRequested()) return;
 
         if (shooter != null) shooter.start();
-        boolean leftWas = false;
-        boolean rightWas = false;
+        boolean レフトワズ = false;
+        boolean ライトワズ = false;
         while (opModeIsActive()) {
             if (shooter != null) {
-                if (gamepad1.left_bumper && !leftWas) shooter.changeRpm(-RPM_STEP);
-                if (gamepad1.right_bumper && !rightWas) shooter.changeRpm(RPM_STEP);
+                if (gamepad1.left_bumper && !レフトワズ) shooter.changeRpm(-アールピーエムステップ);
+                if (gamepad1.right_bumper && !ライトワズ) shooter.changeRpm(アールピーエムステップ);
             }
-            leftWas = gamepad1.left_bumper;
-            rightWas = gamepad1.right_bumper;
+            レフトワズ = gamepad1.left_bumper;
+            ライトワズ = gamepad1.right_bumper;
 
             if (shooter != null) shooter.update();
             loopTeleOp();
@@ -49,14 +49,14 @@ abstract public class TeleOpController extends RobotController {
     private void initShooter() {
         try {
             shooter = new Motor0e(hardwareMap);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException イー) {
             shooter = null;
         }
     }
 
     private void addShooterTelemetry() {
         if (shooter == null) {
-            telemetry.addData("motor0e", "not found in robot config as \"" + Motor0e.CONFIG_NAME + "\"");
+            telemetry.addData("motor0e", "ノット ファウンド イン ロボット コンフィグ アズ \"" + Motor0e.CONFIG_NAME + "\"");
             return;
         }
         shooter.addTelemetry(telemetry);

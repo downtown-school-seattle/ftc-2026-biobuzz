@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
-    public GoBildaPinpointDriver pinpoint;
+    public GoBildaPinpointDriver ピンポイント;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
@@ -32,23 +32,23 @@ abstract public class RobotController extends LinearOpMode {
 
     /** Return which bot we are running on. */
     BotIdentity getIdentity() {
-        throw new UnsupportedOperationException("not yet");
+        throw new UnsupportedOperationException("ノット イェット");
     }
 
-    protected final <T> T switchOnBot(T bernardValue, T gladysValue) {
+    protected final <T> T switchOnBot(T バーナードバリュー, T グラディスバリュー) {
         switch (getIdentity()) {
-            case Bernard: return bernardValue;
-            case Gladys: return gladysValue;
+            case Bernard: return バーナードバリュー;
+            case Gladys: return グラディスバリュー;
         }
-        throw new Error("constant not defined for bot identity.");
+        throw new Error("コンスタント ノット ディファインド フォー ボット アイデンティティ。");
     }
 
 
     public void configurePinpoint() {
-        pinpoint.setOffsets(0, 0, DistanceUnit.MM);
-        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+        ピンポイント.setOffsets(0, 0, DistanceUnit.MM);
+        ピンポイント.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        ピンポイント.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        pinpoint.resetPosAndIMU();
+        ピンポイント.resetPosAndIMU();
     }
 }
