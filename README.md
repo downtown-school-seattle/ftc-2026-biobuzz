@@ -1,32 +1,32 @@
-# FTC 26-27 BioBuzz
+# エフティーシー 26-27 バイオバズ
 
-this is hendrix's branch of the code for the Downtown School's 2026-2027 robotics season
+ディス イズ ヘンドリックスズ ブランチ オブ ザ コード フォー ザ ダウンタウン スクール ズ 2026-2027 ロボティクス シーズン
 
-## teamcode
+## チームコード
 
-hi, this is my teamcode, if anything doesn't make sense to you, please talk to me, I have coded 99% of this and if you don't like it then please tell me instead of changing it without telling
+ハイ、ディス イズ マイ チームコード、イフ エニシング ダズント メイク センス トゥ ユー、プリーズ トーク トゥ ミー、アイ ハブ コーディド 99% オブ ディス アンド イフ ユー ドント ライク イット ゼン プリーズ テル ミー インステッド オブ チェンジング イット ウィズアウト テリング
 
-## making a test opmode
+## テスト オプモード ヲ ツクル
 
-if you are testing an opmode, copy an existing opmode and rename it (eg. RedAutoTest), after testing, if it is good, push it, this is to keep consistency
+イフ ユー アー テスティング アン オプモード、コピー アン イグジスティング オプモード アンド リネーム イット (イージー: レッドオートテスト)、アフター テスティング、イフ イット イズ グッド、プッシュ イット、ディス イズ トゥ キープ コンシステンシー
 
-## autonomous explanation
+## オートノマス セツメイ
 
-there are 3 commands that work in autonomous as well as a way to group them, they are: drive(), turn(), motor()
-there is also run() that allows you to run multiple commands at a time however, they need to be written as "[command]Cmd"
+ゼア アー 3 コマンズ ザット ワーク イン オートノマス アズ ウェル アズ ア ウェイ トゥ グループ ゼム、ゼイ アー: drive()、turn()、motor()
+ゼア イズ アルソー run() ザット アローズ ユー トゥ ラン マルチプル コマンズ アット ア タイム、ハウエバー、ゼイ ニード トゥ ビー リトゥン アズ "[コマンド]Cmd"
 
-examples:
-drive(90 [degrees], 12 [inches])
-turn(45 [degrees])
-motor(motor0e [motor name], 4200 [rpm])
+エグザンプルズ:
+drive(90 [デグリーズ], 12 [インチズ])
+turn(45 [デグリーズ])
+motor(motor0e [モーター ネーム], 4200 [アールピーエム])
 
 run(driveCmd(180, 18), turnCmd(30), motorCmd(motor0e, 4000))
 
-## motor naming
+## モーター ネーミング
 
-all the motors are named after their location on the control hub, the motors on the main hub are named motor# and on the expansion hub they are motor#e
+オール ザ モーターズ アー ネームド アフター ゼア ロケーション オン ザ コントロール ハブ、ザ モーターズ オン ザ メイン ハブ アー ネームド motor# アンド オン ザ エクスパンション ハブ ゼイ アー motor#e
 
-## Contributors
+## コントリビューターズ
 
-- Hendrix C.
-- Kieran B.
+- ヘンドリックス C.
+- キーラン B.
