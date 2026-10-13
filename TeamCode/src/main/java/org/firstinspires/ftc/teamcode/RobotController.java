@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -19,13 +20,19 @@ abstract public class RobotController extends LinearOpMode {
 //        configurePinpoint();
 
         /// Port 0
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
         /// Port 1
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "1_front_right_drive");
         /// Port 2
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "2_back_left_drive");
         /// Port 3
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
+        backRightDrive = hardwareMap.get(DcMotor.class, "3_back_right_drive");
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
     }
     /** Enum representing our color. */
