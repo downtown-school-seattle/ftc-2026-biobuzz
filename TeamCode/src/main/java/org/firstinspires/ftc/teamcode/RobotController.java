@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -33,8 +32,8 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-
     }
+
     /** Enum representing our color. */
     public enum AllianceColor {
         Blue,
@@ -63,7 +62,6 @@ abstract public class RobotController extends LinearOpMode {
         throw new Error("Constant not defined for bot identity.");
     }
 
-
     //pinpoint sensor stuff below
     public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
@@ -76,6 +74,7 @@ abstract public class RobotController extends LinearOpMode {
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
     }
+
     // Thanks to FTC16072 for sharing this code!!
     public void drive(double forward, double right, double rotate) {
         // This calculates the power needed for each wheel based on the amount of forward,
@@ -104,5 +103,4 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
-
 }

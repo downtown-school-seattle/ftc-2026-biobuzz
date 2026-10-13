@@ -1,10 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
-
-
 import org.firstinspires.ftc.teamcode.RobotController;
-
-
 
 abstract public class TeleOpController extends RobotController {
     @Override
@@ -18,7 +14,4 @@ abstract public class TeleOpController extends RobotController {
         drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
 
     }
-
-
-
 }
