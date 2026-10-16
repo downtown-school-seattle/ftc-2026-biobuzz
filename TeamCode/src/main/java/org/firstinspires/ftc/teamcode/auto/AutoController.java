@@ -16,7 +16,7 @@ there is also run() that allows you to run multiple commands at a time however, 
 examples:
 drive(90 [degrees], 12 [inches])
 turn(45 [degrees])
-motor(motor0e [motor name], 4200 [rpm])
+motor(nectarShooter [motor name], 4200 [rpm])
 
 run(turnCmd(30), motorCmd(motor0e, 4000)) currently running a drive and turn command at the same time doesn't work but I am working on that right now
  */
@@ -86,8 +86,8 @@ abstract public class AutoController extends RobotController {
         return new double[]{forward + right - turn, forward + right + turn, right - forward - turn, right - forward + turn};
     }
 
-    protected AutoCommand motorCmd(double rpm) {
-        return new MotorCommand(rpm);
+    protected AutoCommand motorCmd(DcMotorEx motor, double rpm) {
+        return new MotorCommand(motor, rpm);
     }
 
     protected void run(AutoCommand... commands) {
@@ -168,9 +168,12 @@ abstract public class AutoController extends RobotController {
     }
 
     private class MotorCommand implements AutoCommand {
+        private final DcMotorEx motor;
         private final double rpm;
 
-        MotorCommand(double rpm) {
+        MotorCommand(DcMotorEx motor, double rpm) {
+            if (motor != nectarShooter) throw new IllegalArgumentException("motorCmd only supports nectarShooter");
+            this.motor = motor;
             this.rpm = rpm;
         }
 
