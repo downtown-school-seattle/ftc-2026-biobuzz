@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
@@ -12,6 +13,7 @@ abstract public class RobotController extends LinearOpMode {
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
     public DcMotor backRightDrive;
+    public DcMotorEx nectarShooter;
 
     public void initRobotController() {
 
@@ -32,6 +34,12 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        initNectarShooter();
+    }
+
+    public void initNectarShooter() {
+        /// Expansion hub port 0
+        nectarShooter = hardwareMap.get(DcMotorEx.class, "0e_nectar_shooter");
     }
 
     /** Enum representing our color. */
