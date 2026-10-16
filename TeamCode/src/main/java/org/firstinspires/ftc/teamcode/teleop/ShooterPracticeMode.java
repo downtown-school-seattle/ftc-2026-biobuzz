@@ -8,4 +8,7 @@ public class ShooterPracticeMode extends TeleOpController {
     protected void initTeleOp() {
         initNectarShooter();
     }
+
+    @Override
+    protected void loopTeleOp() {}
 }

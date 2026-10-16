@@ -54,6 +54,8 @@ abstract public class RobotController extends LinearOpMode {
         Gladys
     }
 
+    abstract public AllianceColor getAllianceColor();
+
     /** Return which bot we are running on. */
     BotIdentity getIdentity() {
         throw new UnsupportedOperationException("not yet");
