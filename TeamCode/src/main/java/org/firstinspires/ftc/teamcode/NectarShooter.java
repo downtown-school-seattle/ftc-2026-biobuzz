@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 the diptracker stuff is special things for measuring how much rpm the wheel loses when it shoots a ball, it's all commented out right now but feel free to use it
  */
 
-public class NectarShooter0e {
+public class NectarShooter {
     public static final double FREE_SPEED_RPM = 6000;
     public static final double MIN_RPM = 3000;
     public static final double MAX_RPM = 4500;
@@ -26,7 +26,7 @@ public class NectarShooter0e {
 //    private final DipTracker dipTracker = new DipTracker("NectarShooter0e");
     private double commandedPower = 0;
 
-    public NectarShooter0e(DcMotorEx motor) {
+    public NectarShooter(DcMotorEx motor) {
         this.motor = motor;
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

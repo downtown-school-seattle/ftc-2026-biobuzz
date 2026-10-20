@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.NectarShooter0e;
+import org.firstinspires.ftc.teamcode.NectarShooter;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
@@ -40,7 +40,7 @@ abstract public class AutoController extends RobotController {
 
     private static final double TELEMETRY_INTERVAL_MS = 50;
 
-    private NectarShooter0e shooter;
+    private NectarShooter shooter;
     private DcMotor[] wheels;
     private final ElapsedTime telemetryTimer = new ElapsedTime();
     private boolean telemetryDue;
@@ -53,7 +53,7 @@ abstract public class AutoController extends RobotController {
     public void runOpMode() {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         initRobotController();
-        shooter = new NectarShooter0e(nectarShooter);
+        shooter = new NectarShooter(nectarShooter);
         wheels = new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
         for (DcMotor m : wheels) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -116,7 +116,7 @@ abstract public class AutoController extends RobotController {
         for (AutoCommand c : commands) c.end();
     }
 
-    private class MoveCommand implements AutoCommand {
+    private static class MoveCommand implements AutoCommand {
         private final String name;
         private final double[] targets;
         private final ElapsedTime timer = new ElapsedTime();
