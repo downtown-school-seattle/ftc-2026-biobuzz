@@ -5,7 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 abstract public class RobotController extends LinearOpMode {
-    public PinpointOdometry pinpoint;
+    public GoBildaPinpointDriver pinpoint;
+    public PinpointOdometry odometry;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
@@ -13,7 +14,8 @@ abstract public class RobotController extends LinearOpMode {
 
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
-        pinpoint = new PinpointOdometry(hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor"));
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        odometry = new PinpointOdometry(pinpoint);
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
