@@ -9,10 +9,6 @@ abstract public class TeleOpController extends RobotController {
 
     protected NectarShooter shooter;
 
-    protected void initTeleOp() {
-        initRobotController();
-    }
-
     protected void loopTeleOp() {
         drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
     }
@@ -20,7 +16,7 @@ abstract public class TeleOpController extends RobotController {
     @Override
     public void runOpMode() {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
-        initTeleOp();
+        initRobotController();
         shooter = new NectarShooter(nectarShooter);
 
         while (opModeInInit()) {
