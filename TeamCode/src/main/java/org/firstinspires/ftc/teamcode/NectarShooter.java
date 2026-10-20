@@ -86,18 +86,19 @@ public class NectarShooter {
     }
 
     public void addTelemetry(Telemetry telemetry) {
-        telemetry.addData("nectar shooter", "%s  target %.0f rpm  measured %.0f rpm", running ? "ON" : "off", targetRpm, getMeasuredRpm());
+        telemetry.addData("nectar shooter", "%s  target %.0f rpm  measured %.0f rpm", running ? "on" : "off", targetRpm, getMeasuredRpm());
 //        if (!dipTracker.getSummary().isEmpty()) {
 //            telemetry.addLine("<font color=\"#00b300\">" + dipTracker.getSummary() + "</font>");
 //        }
     }
 
-    private void setCommandedPower(double power) {
+    /// How fast the motor should turn. This controls the height we shoot at
+    private void setMotorPower(double power) {
         commandedPower = power;
         motor.setPower(power);
     }
 
     private void apply() {
-        setCommandedPower(running ? targetRpm / FREE_SPEED_RPM : 0);
+        setMotorPower(running ? targetRpm / FREE_SPEED_RPM : 0);
     }
 }
