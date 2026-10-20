@@ -42,6 +42,7 @@ abstract public class TeleOpController extends RobotController {
             loopTeleOp();
             shooter.addTelemetry(telemetry);
             telemetry.update();
+            idle();
         }
         shooter.stop();
     }

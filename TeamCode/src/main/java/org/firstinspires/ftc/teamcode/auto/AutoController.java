@@ -116,7 +116,7 @@ abstract public class AutoController extends RobotController {
         for (AutoCommand c : commands) c.end();
     }
 
-    private static class MoveCommand implements AutoCommand {
+    private class MoveCommand implements AutoCommand {
         private final String name;
         private final double[] targets;
         private final ElapsedTime timer = new ElapsedTime();
@@ -136,6 +136,7 @@ abstract public class AutoController extends RobotController {
             for (int i = 0; i < motors.length; i++) {
                 motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motors[i].setTargetPosition((int) Math.round(targets[i]));
+
                 motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 motors[i].setPower(farthest == 0 ? 0 : power * Math.abs(targets[i]) / farthest);
             }
