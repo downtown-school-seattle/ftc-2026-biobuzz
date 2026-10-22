@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
@@ -11,6 +12,7 @@ abstract public class RobotController extends LinearOpMode {
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
     public DcMotor backRightDrive;
+    public DcMotorEx nectarShooter;
 
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
@@ -31,6 +33,12 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        initNectarShooter();
+    }
+
+    public void initNectarShooter() {
+        /// Expansion hub port 0
+        nectarShooter = hardwareMap.get(DcMotorEx.class, "0e_nectar_shooter");
     }
 
     /** Enum representing our color. */
@@ -59,6 +67,19 @@ abstract public class RobotController extends LinearOpMode {
             case Gladys: return gladysValue;
         }
         throw new Error("Constant not defined for bot identity.");
+    }
+
+    //pinpoint sensor stuff below
+    public void configurePinpoint() {
+        //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
+        pinpoint.setOffsets(0, 0, DistanceUnit.MM);
+        //change to pinpoint sensor type if not the same as old robot
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        // should not need changing
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        //does something important before starting the robot
+        pinpoint.resetPosAndIMU();
     }
 
     // Thanks to FTC16072 for sharing this code!!
