@@ -69,4 +69,5 @@ abstract public class RobotController extends LinearOpMode {
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
     }
+
 }
