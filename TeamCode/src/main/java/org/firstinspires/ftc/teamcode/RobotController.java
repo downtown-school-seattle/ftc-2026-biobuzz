@@ -5,10 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
+    public PinpointOdometry odometry;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
@@ -16,9 +15,9 @@ abstract public class RobotController extends LinearOpMode {
     public DcMotorEx nectarShooter;
 
     public void initRobotController() {
-
-//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-//        configurePinpoint();
+        // I2C (intra-integrated circuit) Port 0
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        odometry = new PinpointOdometry(pinpoint);
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -57,7 +56,7 @@ abstract public class RobotController extends LinearOpMode {
     abstract public AllianceColor getAllianceColor();
 
     /** Return which bot we are running on. */
-    BotIdentity getIdentity() {
+    protected BotIdentity getIdentity() {
         throw new UnsupportedOperationException("not yet");
     }
 
