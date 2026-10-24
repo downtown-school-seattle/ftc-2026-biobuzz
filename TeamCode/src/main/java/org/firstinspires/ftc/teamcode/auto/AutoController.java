@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.NectarShooter;
+import org.firstinspires.ftc.teamcode.ExMotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
@@ -33,14 +33,12 @@ abstract public class AutoController extends RobotController {
 
     protected double ticksPerInch = 40;
     protected double ticksPerDegree = 10;
-    protected double wheelTicksPerRev = 537.7;
+    protected double wheelTicksPerRev = ExMotorTable.GOBILDA_312_RPM.encoderResolution;
     protected double power = 0.5;
     protected int tolerance = 15;
     protected double moveTimeoutSeconds = 5;
 
     private static final double TELEMETRY_INTERVAL_MS = 50;
-
-    private NectarShooter shooter;
     private DcMotor[] wheels;
     private final ElapsedTime telemetryTimer = new ElapsedTime();
     private boolean telemetryDue;
@@ -53,13 +51,13 @@ abstract public class AutoController extends RobotController {
     public void runOpMode() {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         initRobotController();
-        shooter = new NectarShooter(nectarShooter);
         wheels = new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
         for (DcMotor m : wheels) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
         if (opModeIsActive()) runAuto();
-        shooter.stop();
+        setShooterRpm(0);
+        setIntakeRpm(0);
     }
 
     protected void drive(double degrees, double inches) {
@@ -103,11 +101,11 @@ abstract public class AutoController extends RobotController {
                 c.update();
                 allDone = false;
             }
-            shooter.update();
             telemetryDue = telemetryTimer.milliseconds() >= TELEMETRY_INTERVAL_MS;
             if (telemetryDue) {
                 telemetryTimer.reset();
-                shooter.addTelemetry(telemetry);
+                telemetry.addData("shooter", Math.round(getShooterRpm()));
+                telemetry.addData("intake", Math.round(getIntakeRpm()));
                 telemetry.update();
             }
             if (allDone) break;
@@ -173,15 +171,23 @@ abstract public class AutoController extends RobotController {
         private final double rpm;
 
         MotorCommand(DcMotorEx motor, double rpm) {
-            if (motor != nectarShooter) throw new IllegalArgumentException("motorCmd only supports nectarShooter");
+            if (motor != shooterMotor && motor != intakeMotor)
+                throw new IllegalArgumentException("motorCmd only supports Shooter motor & Intake motor");
             this.motor = motor;
             this.rpm = rpm;
         }
 
         @Override
         public void start() {
-            shooter.setRpm(rpm);
-            RobotLog.ii(TAG, "nectar shooter set to " + rpm + " rpm");
+            if (motor == shooterMotor) {
+                setShooterRpm(rpm);
+                RobotLog.ii(TAG, "shooter set to " + rpm + " rpm");
+            } else {
+                setIntakeRpm(rpm);
+                RobotLog.ii(TAG, "intake set to " + rpm + " rpm");
+            }
+
+
         }
 
         @Override

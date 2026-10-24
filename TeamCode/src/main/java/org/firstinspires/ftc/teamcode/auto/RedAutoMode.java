@@ -17,6 +17,6 @@ public class RedAutoMode extends AutoController {
         drive(RIGHT, 1);
         turn(-0.5);
         turn(0.5);
-        run(motorCmd(nectarShooter, 4000), driveCmd(LEFT, 18));
+        run(motorCmd(shooterMotor, 4000), driveCmd(LEFT, 18));
     }
 }
