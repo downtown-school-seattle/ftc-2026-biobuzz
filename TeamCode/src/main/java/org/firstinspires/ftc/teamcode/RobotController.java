@@ -12,7 +12,14 @@ abstract public class RobotController extends LinearOpMode {
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
     public DcMotor backRightDrive;
-    public DcMotorEx nectarShooter;
+    public DcMotorEx shooterMotor;
+    public DcMotorEx intakeMotor;
+
+    public static final ExMotorTable SHOOTER_SPEC = ExMotorTable.GOBILDA_6000_RPM;
+    public static final ExMotorTable INTAKE_SPEC = ExMotorTable.GOBILDA_1620_RPM;
+    public static final double SHOOTER_MAX_RPM = 4500;
+    public static final double INTAKE_MAX_RPM = 1000;
+    protected double shooterTargetRpm = 4200;
 
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
@@ -33,13 +40,40 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        initNectarShooter();
+        initShooter();
+        initIntake();
+    }
+    public void initShooter() {
+        shooterMotor = hardwareMap.get(DcMotorEx.class, "shooter");
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void initIntake(){
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    public void initNectarShooter() {
-        /// Expansion hub port 0
-        nectarShooter = hardwareMap.get(DcMotorEx.class, "0e_nectar_shooter");
+    /** new helpers for motors!!!*/
+    public void setShooterRpm(double rpm){
+        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clampRpm(rpm, SHOOTER_MAX_RPM));
     }
+    public void setIntakeRpm(double rpm){
+        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clampRpm(rpm, INTAKE_MAX_RPM));
+    }
+
+    public double getShooterRpm() {return MotorUtil.getMeasuredRpm(shooterMotor, SHOOTER_SPEC);}
+    public double getIntakeRpm() {return MotorUtil.getMeasuredRpm(intakeMotor, INTAKE_SPEC);}
+
+    /**
+     * changes the shooter target based off the current target,
+     * defined in RobotController as ShooterTargetRpm
+     * @param delta the amount to change by, can be positive or negative
+     */
+    protected void changeShooterTarget(double delta){
+        shooterTargetRpm = MotorUtil.clampRpm(shooterTargetRpm + delta, SHOOTER_MAX_RPM);
+    }
+
 
     /** Enum representing our color. */
     public enum AllianceColor {

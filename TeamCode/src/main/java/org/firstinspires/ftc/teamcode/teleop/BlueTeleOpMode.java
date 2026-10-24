@@ -8,4 +8,13 @@ public class BlueTeleOpMode extends TeleOpController {
     public AllianceColor getAllianceColor() {
         return AllianceColor.Blue;
     }
+
+
+
+
+
+
+
+
+
 }
