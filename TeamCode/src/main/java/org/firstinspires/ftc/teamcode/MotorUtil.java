@@ -46,7 +46,7 @@ public class MotorUtil {
      * @param value the value of the method
      * @param max the maximum of the method
      * @param min the minimum of the method
-     * @return
+     * @return the value closest to being inbetween the max and min
      */
     public static double clamp(double value, double max, double min){
         return Math.max(min, Math.min(max, value));
