@@ -20,13 +20,13 @@ abstract public class RobotController extends LinearOpMode {
     public static final MotorTable SHOOTER_SPEC = MotorTable.GOBILDA_6000_RPM;
     public static final MotorTable INTAKE_SPEC = MotorTable.GOBILDA_1620_RPM;
     public static final double SHOOTER_MAX_RPM = 4500;
-    public static final double INTAKE_MAX_RPM = 1000;
+    public static final double INTAKE_MAX_RPM = 200;
     protected double shooterTargetRpm = 4200;
 
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
-        odometry = new PinpointOdometry(pinpoint);
+        // pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        // odometry = new PinpointOdometry(pinpoint);
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -104,7 +104,7 @@ abstract public class RobotController extends LinearOpMode {
     }
 
     //pinpoint sensor stuff below
-    public void configurePinpoint() {
+    /* public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
         pinpoint.setOffsets(0, 0, DistanceUnit.MM);
         //change to pinpoint sensor type if not the same as old robot
@@ -114,7 +114,7 @@ abstract public class RobotController extends LinearOpMode {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
-    }
+    } */
 
     // Thanks to FTC16072 for sharing this code!!
     public void drive(double forward, double right, double rotate) {

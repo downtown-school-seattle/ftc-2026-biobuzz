@@ -10,13 +10,17 @@ import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
-there are 3 commands that work in autonomous as well as a way to group them, they are: drive(), turn(), motor()
-there is also run() that allows you to run multiple commands at a time however, they need to be written as "[command]Cmd"
+commands that work in autonomous: driveCmd(), turnCmd(), motorCmd(), waitCmd()
+run() runs one or more commands at the same time
 
 examples:
-drive(90 [degrees], 12 [inches])
-turn(45 [degrees])
-motor(nectarShooter [motor name], 4200 [rpm])
+run(driveCmd(90 [degrees], 12 [inches]))
+run(turnCmd(45 [degrees]))
+run(motorCmd(shooterMotor [motor name], 4200 [rpm]))
+run(waitCmd(1.5 [seconds]))
+
+a motor command keeps the motor spinning at that rpm until the end of auto or the next motor command for the same motor
+waitCmd(seconds) only delays, so motors keep spinning and other commands in the same run() keep going
 
 run(turnCmd(30), motorCmd(motor0e, 4000)) currently running a drive and turn command at the same time doesn't work but I am working on that right now
  */
@@ -60,14 +64,6 @@ abstract public class AutoController extends RobotController {
         setIntakeRpm(0);
     }
 
-    protected void drive(double degrees, double inches) {
-        run(driveCmd(degrees, inches));
-    }
-
-    protected void turn(double degrees) {
-        run(turnCmd(degrees));
-    }
-
     protected AutoCommand driveCmd(double degrees, double inches) {
         double radians = Math.toRadians(degrees);
         double forward = Math.cos(radians) * inches * ticksPerInch;
@@ -86,6 +82,10 @@ abstract public class AutoController extends RobotController {
 
     protected AutoCommand motorCmd(DcMotorEx motor, double rpm) {
         return new MotorCommand(motor, rpm);
+    }
+
+    protected AutoCommand waitCmd(double seconds) {
+        return new WaitCommand(seconds);
     }
 
     protected void run(AutoCommand... commands) {
@@ -167,6 +167,32 @@ abstract public class AutoController extends RobotController {
         }
     }
 
+    private static class WaitCommand implements AutoCommand {
+        private final double seconds;
+        private final ElapsedTime timer = new ElapsedTime();
+
+        WaitCommand(double seconds) {
+            this.seconds = seconds;
+        }
+
+        @Override
+        public void start() {
+            timer.reset();
+        }
+
+        @Override
+        public void update() {}
+
+        @Override
+        public boolean isDone() {
+            return timer.seconds() >= seconds;
+        }
+
+        @Override
+        public void end() {}
+    }
+
+    /** Sets the rpm and finishes right away. The motor holds that velocity until the next motorCmd for it or the end of auto. */
     private class MotorCommand implements AutoCommand {
         private final DcMotorEx motor;
         private final double rpm;
