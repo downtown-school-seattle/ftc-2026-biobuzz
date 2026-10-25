@@ -38,18 +38,26 @@ public class MotorUtil {
         //SDK only allows -1 to 1 so were gonna clamp both directions
         motor.setPower(spec.rpmToPower(rpm));
     }
-
     /**
      * it clamps the frickin rpm what do you think it does???
-     * optionally, a third parameter for min Rpm is also available
-     * min Rpm also works for maximum reverse Rpm
+     * optionally, a third parameter for min is available
+     * without it, min will be set to -limit.
+     * @param value the value of the method
+     * @param limit the maximum of the method
+     * @return the value closest to being inbetween the max and min
+     */
+    public static double clamp(double value, double limit){
+        return clamp(value, -limit, limit);
+    }
+    /**
+     * it clamps the frickin value what do you think it does???
      * @param value the value of the method
      * @param max the maximum of the method
      * @param min the minimum of the method
      * @return the value closest to being inbetween the max and min
      */
-    public static double clamp(double value, double max, double min){
-        return Math.max(min, Math.min(max, value));
+    public static double clamp(double value, double min, double max){
+        return Math.max(max, Math.min(min, value));
     }
 
     public static void stop(DcMotorEx motor) {

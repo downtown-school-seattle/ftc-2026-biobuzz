@@ -54,10 +54,10 @@ abstract public class RobotController extends LinearOpMode {
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void setShooterRpm(double rpm){
-        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, SHOOTER_MAX_RPM, -INTAKE_MAX_RPM));
+        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, -SHOOTER_MAX_RPM, SHOOTER_MAX_RPM));
     }
     public void setIntakeRpm(double rpm){
-        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clamp(rpm, INTAKE_MAX_RPM, -INTAKE_MAX_RPM));
+        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clamp(rpm, -INTAKE_MAX_RPM, INTAKE_MAX_RPM));
     }
 
     public double getShooterRpm() {return MotorUtil.getMeasuredRpm(shooterMotor, SHOOTER_SPEC);}
