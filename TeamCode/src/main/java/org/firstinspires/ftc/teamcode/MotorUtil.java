@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class MotorUtil {
     private MotorUtil() {}
 
-    public static double getMeasuredRpm(DcMotorEx motor, ExMotorTable spec) {
+    public static double getMeasuredRpm(DcMotorEx motor, MotorTable spec) {
         return motor.getVelocity() / spec.encoderResolution * 60.0;
     }
 
@@ -18,11 +20,11 @@ public class MotorUtil {
      * @param spec specs of the motor you want to use
      * @param rpm target speed. Negative = reverse, 0 = stop
      */
-    public static void setRpm(DcMotorEx motor, ExMotorTable spec, double rpm){
+    public static void setRpm(DcMotorEx motor, MotorTable spec, double rpm){
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //SDK wants ticks/s not rpm, no clue why, incredibly backwards.
-        motor.setVelocity(rpm /60.0 * spec.encoderResolution);
+        motor.setVelocity(rpm /60.0 * Math.PI * 2, AngleUnit.RADIANS);
     }
 
     /**
@@ -32,36 +34,22 @@ public class MotorUtil {
      * @param spec specs of the motor you want to use
      * @param rpm target speed. Negative = reverse, 0 = stop
      */
-    public static void setRpmOpen(DcMotorEx motor, ExMotorTable spec, double rpm){
-        double power = rpm / spec.freeSpeedRpm;
+    public static void setRpmOpen(DcMotorEx motor, MotorTable spec, double rpm){
         //SDK only allows -1 to 1 so were gonna clamp both directions
-        motor.setPower(Math.max(-1.0, Math.min(1.0, power)));
+        motor.setPower(spec.rpmToPower(rpm));
     }
 
     /**
      * it clamps the frickin rpm what do you think it does???
      * optionally, a third parameter for min Rpm is also available
      * min Rpm also works for maximum reverse Rpm
-     * @param rpm rpm it is currently running at
-     * @param maxRpm the maximum rpm it should be able to run at
+     * @param value the value of the method
+     * @param max the maximum of the method
+     * @param min the minimum of the method
      * @return
      */
-    //why the frick doesnt java have default parameter values????? i hate it here???
-    public static double clampRpm(double rpm, double maxRpm) {
-        return Math.max(-maxRpm, Math.min(maxRpm, rpm));
-    }
-    //okay owen i know this looks weird but since java doesnt have default parameters this is the workaround
-    /**
-     * it clamps the frickin rpm what do you think it does???
-     * optionally, a third parameter for min Rpm is also available
-     * min Rpm also works for maximum reverse Rpm
-     * @param rpm rpm it is currently running at
-     * @param maxRpm the maximum rpm it should be able to run
-     * @param minRpm the minimum rpm it should be able to run at, THIS INCLUDES REVERSE
-     * @return
-     */
-    public static double clampRpm(double rpm, double maxRpm, double minRpm){
-        return Math.max(minRpm, Math.min(maxRpm, rpm));
+    public static double clamp(double value, double max, double min){
+        return Math.max(min, Math.min(max, value));
     }
 
     public static void stop(DcMotorEx motor) {

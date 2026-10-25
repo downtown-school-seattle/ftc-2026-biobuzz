@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-public enum ExMotorTable {
+public enum MotorTable {
     //denoted as series then gearing ratio
     GOBILDA_6000_RPM (6000, 28.0), //5203 series, 1:1
     GOBILDA_1620_RPM (1620, 103.8), //5203 series, 3.7:1
@@ -9,7 +9,7 @@ public enum ExMotorTable {
     public final double freeSpeedRpm;
     public final double encoderResolution; //also known as PPR, encoder ticks per revolution
 
-    ExMotorTable(double freeSpeedRpm, double encoderResolution) {
+    MotorTable(double freeSpeedRpm, double encoderResolution) {
         this.freeSpeedRpm = freeSpeedRpm;
         this.encoderResolution = encoderResolution;
     }

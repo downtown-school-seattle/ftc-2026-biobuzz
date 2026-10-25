@@ -16,8 +16,8 @@ abstract public class RobotController extends LinearOpMode {
     public DcMotorEx shooterMotor;
     public DcMotorEx intakeMotor;
 
-    public static final ExMotorTable SHOOTER_SPEC = ExMotorTable.GOBILDA_6000_RPM;
-    public static final ExMotorTable INTAKE_SPEC = ExMotorTable.GOBILDA_1620_RPM;
+    public static final MotorTable SHOOTER_SPEC = MotorTable.GOBILDA_6000_RPM;
+    public static final MotorTable INTAKE_SPEC = MotorTable.GOBILDA_1620_RPM;
     public static final double SHOOTER_MAX_RPM = 4500;
     public static final double INTAKE_MAX_RPM = 1000;
     protected double shooterTargetRpm = 4200;
@@ -54,13 +54,11 @@ abstract public class RobotController extends LinearOpMode {
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
-    /** new helpers for motors!!!*/
     public void setShooterRpm(double rpm){
-        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clampRpm(rpm, SHOOTER_MAX_RPM));
+        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, SHOOTER_MAX_RPM, -INTAKE_MAX_RPM));
     }
     public void setIntakeRpm(double rpm){
-        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clampRpm(rpm, INTAKE_MAX_RPM));
+        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clamp(rpm, INTAKE_MAX_RPM, -INTAKE_MAX_RPM));
     }
 
     public double getShooterRpm() {return MotorUtil.getMeasuredRpm(shooterMotor, SHOOTER_SPEC);}
@@ -72,7 +70,7 @@ abstract public class RobotController extends LinearOpMode {
      * @param delta the amount to change by, can be positive or negative
      */
     protected void changeShooterTarget(double delta){
-        shooterTargetRpm = MotorUtil.clampRpm(shooterTargetRpm + delta, SHOOTER_MAX_RPM);
+        shooterTargetRpm = MotorUtil.clamp(shooterTargetRpm + delta, SHOOTER_MAX_RPM, -SHOOTER_MAX_RPM);
     }
 
 

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.ExMotorTable;
+import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
@@ -33,7 +33,7 @@ abstract public class AutoController extends RobotController {
 
     protected double ticksPerInch = 40;
     protected double ticksPerDegree = 10;
-    protected double wheelTicksPerRev = ExMotorTable.GOBILDA_312_RPM.encoderResolution;
+    protected double driveWheelTicksPerRev = MotorTable.GOBILDA_312_RPM.encoderResolution;
     protected double power = 0.5;
     protected int tolerance = 15;
     protected double moveTimeoutSeconds = 5;
@@ -104,8 +104,8 @@ abstract public class AutoController extends RobotController {
             telemetryDue = telemetryTimer.milliseconds() >= TELEMETRY_INTERVAL_MS;
             if (telemetryDue) {
                 telemetryTimer.reset();
-                telemetry.addData("shooter", Math.round(getShooterRpm()));
-                telemetry.addData("intake", Math.round(getIntakeRpm()));
+                telemetry.addData("shooter rpm: ", Math.round(getShooterRpm()));
+                telemetry.addData("intake rpm: ", Math.round(getIntakeRpm()));
                 telemetry.update();
             }
             if (allDone) break;
@@ -127,7 +127,8 @@ abstract public class AutoController extends RobotController {
 
         @Override
         public void start() {
-            RobotLog.ii(TAG, "starting: " + name);
+            telemetry.addData("This robot is:", name);
+            telemetry.update();
             DcMotor[] motors = wheels;
             double farthest = 0;
             for (double t : targets) farthest = Math.max(farthest, Math.abs(t));
@@ -205,7 +206,7 @@ abstract public class AutoController extends RobotController {
     private void addWheelTelemetry(DcMotor[] motors) {
         double[] rpm = new double[motors.length];
         for (int i = 0; i < motors.length; i++) {
-            rpm[i] = ((DcMotorEx) motors[i]).getVelocity() / wheelTicksPerRev * 60;
+            rpm[i] = ((DcMotorEx) motors[i]).getVelocity() / driveWheelTicksPerRev * 60;
             telemetry.addData(WHEELS[i], "%.0f rpm", rpm[i]);
         }
 
