@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
     public PinpointOdometry odometry;
