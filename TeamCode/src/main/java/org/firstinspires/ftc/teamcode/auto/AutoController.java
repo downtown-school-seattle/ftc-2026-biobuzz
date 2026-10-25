@@ -77,7 +77,8 @@ abstract public class AutoController extends RobotController {
     }
 
     private static double[] wheelTargets(double forward, double right, double turn) {
-        return new double[]{forward + right - turn, forward + right + turn, right - forward - turn, right - forward + turn};
+        // order is fl, fr, bl, br. same mix as RobotController.drive(): forward is all wheels, right is fl and br forward with fr and bl back
+        return new double[]{forward + right - turn, forward - right + turn, forward - right - turn, forward + right + turn};
     }
 
     protected AutoCommand motorCmd(DcMotorEx motor, double rpm) {

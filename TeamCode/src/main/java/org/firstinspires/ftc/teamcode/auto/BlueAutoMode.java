@@ -11,7 +11,6 @@ public class BlueAutoMode extends AutoController {
 
     @Override
     protected void runAuto() {
-        run(motorCmd(intakeMotor, 8));
-        run(waitCmd(10));
+        run(driveCmd(90, 200));
     }
 }
