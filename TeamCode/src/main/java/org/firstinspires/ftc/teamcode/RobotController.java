@@ -21,7 +21,7 @@ abstract public class RobotController extends LinearOpMode {
     public static final MotorTable INTAKE_SPEC = MotorTable.GOBILDA_1620_RPM;
     public static final double SHOOTER_MAX_RPM = 4500;
     public static final double INTAKE_MAX_RPM = 200;
-    protected double shooterTargetRpm = 4200;
+    protected double shooterTargetRpm = 3500;
 
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
