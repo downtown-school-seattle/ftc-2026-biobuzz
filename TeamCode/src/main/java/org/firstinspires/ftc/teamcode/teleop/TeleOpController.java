@@ -5,17 +5,16 @@ import org.firstinspires.ftc.teamcode.MotorUtil;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 abstract public class TeleOpController extends RobotController {
-    private static final double INTAKE_RPM = 3;
+    private static final double INTAKE_RPM = 2.5;
 
-    protected boolean intakeReversed = false;
     protected double lastIntakeTarget = 0;
 
     protected void loopTeleOp() {
-        if (gamepad1.rightBumperWasPressed()) intakeReversed = !intakeReversed;
-
         double intakeTarget = 0;
-        if (gamepad1.right_trigger_pressed) intakeTarget = intakeReversed ? -INTAKE_RPM : INTAKE_RPM;
-        if (gamepad1.rightTriggerWasReleased()) setIntakeRpm(0);
+        if (gamepad1.right_bumper) intakeTarget = INTAKE_RPM;
+        else if (gamepad1.left_bumper) intakeTarget = -INTAKE_RPM;
+
+        if (intakeTarget == 0) MotorUtil.stop(intakeMotor);
         else setIntakeRpm(intakeTarget);
         lastIntakeTarget = intakeTarget;
 
@@ -27,7 +26,6 @@ abstract public class TeleOpController extends RobotController {
         telemetry.addData("shooter rpm", Math.round(getShooterRpm()));
         telemetry.addData("intake target", lastIntakeTarget);
         telemetry.addData("intake rpm", getIntakeRpm());
-        telemetry.addData("right trigger", gamepad1.right_trigger);
         telemetry.update();
     }
 
