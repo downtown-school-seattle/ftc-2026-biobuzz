@@ -182,10 +182,10 @@ abstract public class AutoController extends RobotController {
         public void start() {
             if (motor == shooterMotor) {
                 setShooterRpm(rpm);
-                RobotLog.ii(TAG, "shooter set to " + rpm + " rpm");
+                telemetry.addData("shooter set to rpm:", rpm);
             } else {
                 setIntakeRpm(rpm);
-                RobotLog.ii(TAG, "intake set to " + rpm + " rpm");
+                telemetry.addData("intake set to rpm:", rpm);
             }
 
 
