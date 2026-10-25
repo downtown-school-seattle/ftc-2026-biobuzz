@@ -49,7 +49,6 @@ abstract public class AutoController extends RobotController {
 
     @Override
     public void runOpMode() {
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         initRobotController();
         wheels = new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
         for (DcMotor m : wheels) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
