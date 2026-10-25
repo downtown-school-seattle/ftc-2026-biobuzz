@@ -23,6 +23,6 @@ public enum MotorTable {
 
     /** Approximate power fraction (-1 to 1) for open loop control */
     public double rpmToPower(double rpm){
-        return rpm / freeSpeedRpm;
+        return MotorUtil.clamp(rpm / freeSpeedRpm, -1, 1);
     }
 }
