@@ -9,16 +9,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
+    public PinpointOdometry odometry;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
     public DcMotor backRightDrive;
-    public DcMotorEx nectarShooter;
+    public DcMotorEx shooterMotor;
+    public DcMotorEx intakeMotor;
+
+    public static final MotorTable SHOOTER_SPEC = MotorTable.GOBILDA_6000_RPM;
+    public static final MotorTable INTAKE_SPEC = MotorTable.GOBILDA_1620_RPM;
+    public static final double SHOOTER_MAX_RPM = 4500;
+    public static final double INTAKE_MAX_RPM = 200;
+    protected double shooterTargetRpm = 4200;
 
     public void initRobotController() {
-
-//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-//        configurePinpoint();
+        // I2C (intra-integrated circuit) Port 0
+        // pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        // odometry = new PinpointOdometry(pinpoint);
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -34,13 +42,38 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        initNectarShooter();
+        initShooter();
+        initIntake();
+    }
+    public void initShooter() {
+        shooterMotor = hardwareMap.get(DcMotorEx.class, "shooter");
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void initIntake(){
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void setShooterRpm(double rpm){
+        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, -SHOOTER_MAX_RPM, SHOOTER_MAX_RPM));
+    }
+    public void setIntakeRpm(double rpm){
+        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clamp(rpm, -INTAKE_MAX_RPM, INTAKE_MAX_RPM));
     }
 
-    public void initNectarShooter() {
-        /// Expansion hub port 0
-        nectarShooter = hardwareMap.get(DcMotorEx.class, "0e_nectar_shooter");
+    public double getShooterRpm() {return MotorUtil.getMeasuredRpm(shooterMotor, SHOOTER_SPEC);}
+    public double getIntakeRpm() {return MotorUtil.getMeasuredRpm(intakeMotor, INTAKE_SPEC);}
+
+    /**
+     * changes the shooter target based off the current target,
+     * defined in RobotController as ShooterTargetRpm
+     * @param delta the amount to change by, can be positive or negative
+     */
+    protected void changeShooterTarget(double delta){
+        shooterTargetRpm = MotorUtil.clamp(shooterTargetRpm + delta, SHOOTER_MAX_RPM, -SHOOTER_MAX_RPM);
     }
+
 
     /** Enum representing our color. */
     public enum AllianceColor {
@@ -57,7 +90,7 @@ abstract public class RobotController extends LinearOpMode {
     abstract public AllianceColor getAllianceColor();
 
     /** Return which bot we are running on. */
-    BotIdentity getIdentity() {
+    protected BotIdentity getIdentity() {
         throw new UnsupportedOperationException("not yet");
     }
 
@@ -71,7 +104,7 @@ abstract public class RobotController extends LinearOpMode {
     }
 
     //pinpoint sensor stuff below
-    public void configurePinpoint() {
+    /* public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
         pinpoint.setOffsets(0, 0, DistanceUnit.MM);
         //change to pinpoint sensor type if not the same as old robot
@@ -81,7 +114,7 @@ abstract public class RobotController extends LinearOpMode {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
-    }
+    } */
 
     // Thanks to FTC16072 for sharing this code!!
     public void drive(double forward, double right, double rotate) {

@@ -6,17 +6,21 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.NectarShooter;
+import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
-there are 3 commands that work in autonomous as well as a way to group them, they are: drive(), turn(), motor()
-there is also run() that allows you to run multiple commands at a time however, they need to be written as "[command]Cmd"
+commands that work in autonomous: driveCmd(), turnCmd(), motorCmd(), waitCmd()
+run() runs one or more commands at the same time
 
 examples:
-drive(90 [degrees], 12 [inches])
-turn(45 [degrees])
-motor(nectarShooter [motor name], 4200 [rpm])
+run(driveCmd(90 [degrees], 12 [inches]))
+run(turnCmd(45 [degrees]))
+run(motorCmd(shooterMotor [motor name], 4200 [rpm]))
+run(waitCmd(1.5 [seconds]))
+
+a motor command keeps the motor spinning at that rpm until the end of auto or the next motor command for the same motor
+waitCmd(seconds) only delays, so motors keep spinning and other commands in the same run() keep going
 
 run(turnCmd(30), motorCmd(motor0e, 4000)) currently running a drive and turn command at the same time doesn't work but I am working on that right now
  */
@@ -33,14 +37,12 @@ abstract public class AutoController extends RobotController {
 
     protected double ticksPerInch = 40;
     protected double ticksPerDegree = 10;
-    protected double wheelTicksPerRev = 537.7;
+    protected double driveWheelTicksPerRev = MotorTable.GOBILDA_312_RPM.encoderResolution;
     protected double power = 0.5;
     protected int tolerance = 15;
     protected double moveTimeoutSeconds = 5;
 
     private static final double TELEMETRY_INTERVAL_MS = 50;
-
-    private NectarShooter shooter;
     private DcMotor[] wheels;
     private final ElapsedTime telemetryTimer = new ElapsedTime();
     private boolean telemetryDue;
@@ -53,21 +55,13 @@ abstract public class AutoController extends RobotController {
     public void runOpMode() {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         initRobotController();
-        shooter = new NectarShooter(nectarShooter);
         wheels = new DcMotor[]{frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive};
         for (DcMotor m : wheels) m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
         if (opModeIsActive()) runAuto();
-        shooter.stop();
-    }
-
-    protected void drive(double degrees, double inches) {
-        run(driveCmd(degrees, inches));
-    }
-
-    protected void turn(double degrees) {
-        run(turnCmd(degrees));
+        setShooterRpm(0);
+        setIntakeRpm(0);
     }
 
     protected AutoCommand driveCmd(double degrees, double inches) {
@@ -83,11 +77,16 @@ abstract public class AutoController extends RobotController {
     }
 
     private static double[] wheelTargets(double forward, double right, double turn) {
-        return new double[]{forward + right - turn, forward + right + turn, right - forward - turn, right - forward + turn};
+        // order is fl, fr, bl, br. same mix as RobotController.drive(): forward is all wheels, right is fl and br forward with fr and bl back
+        return new double[]{forward + right - turn, forward - right + turn, forward - right - turn, forward + right + turn};
     }
 
     protected AutoCommand motorCmd(DcMotorEx motor, double rpm) {
         return new MotorCommand(motor, rpm);
+    }
+
+    protected AutoCommand waitCmd(double seconds) {
+        return new WaitCommand(seconds);
     }
 
     protected void run(AutoCommand... commands) {
@@ -103,11 +102,11 @@ abstract public class AutoController extends RobotController {
                 c.update();
                 allDone = false;
             }
-            shooter.update();
             telemetryDue = telemetryTimer.milliseconds() >= TELEMETRY_INTERVAL_MS;
             if (telemetryDue) {
                 telemetryTimer.reset();
-                shooter.addTelemetry(telemetry);
+                telemetry.addData("shooter rpm: ", Math.round(getShooterRpm()));
+                telemetry.addData("intake rpm: ", Math.round(getIntakeRpm()));
                 telemetry.update();
             }
             if (allDone) break;
@@ -129,7 +128,8 @@ abstract public class AutoController extends RobotController {
 
         @Override
         public void start() {
-            RobotLog.ii(TAG, "starting: " + name);
+            telemetry.addData("This robot is:", name);
+            telemetry.update();
             DcMotor[] motors = wheels;
             double farthest = 0;
             for (double t : targets) farthest = Math.max(farthest, Math.abs(t));
@@ -168,20 +168,54 @@ abstract public class AutoController extends RobotController {
         }
     }
 
+    private static class WaitCommand implements AutoCommand {
+        private final double seconds;
+        private final ElapsedTime timer = new ElapsedTime();
+
+        WaitCommand(double seconds) {
+            this.seconds = seconds;
+        }
+
+        @Override
+        public void start() {
+            timer.reset();
+        }
+
+        @Override
+        public void update() {}
+
+        @Override
+        public boolean isDone() {
+            return timer.seconds() >= seconds;
+        }
+
+        @Override
+        public void end() {}
+    }
+
+    /** Sets the rpm and finishes right away. The motor holds that velocity until the next motorCmd for it or the end of auto. */
     private class MotorCommand implements AutoCommand {
         private final DcMotorEx motor;
         private final double rpm;
 
         MotorCommand(DcMotorEx motor, double rpm) {
-            if (motor != nectarShooter) throw new IllegalArgumentException("motorCmd only supports nectarShooter");
+            if (motor != shooterMotor && motor != intakeMotor)
+                throw new IllegalArgumentException("motorCmd only supports Shooter motor & Intake motor");
             this.motor = motor;
             this.rpm = rpm;
         }
 
         @Override
         public void start() {
-            shooter.setRpm(rpm);
-            RobotLog.ii(TAG, "nectar shooter set to " + rpm + " rpm");
+            if (motor == shooterMotor) {
+                setShooterRpm(rpm);
+                telemetry.addData("shooter set to rpm:", rpm);
+            } else {
+                setIntakeRpm(rpm);
+                telemetry.addData("intake set to rpm:", rpm);
+            }
+
+
         }
 
         @Override
@@ -199,7 +233,7 @@ abstract public class AutoController extends RobotController {
     private void addWheelTelemetry(DcMotor[] motors) {
         double[] rpm = new double[motors.length];
         for (int i = 0; i < motors.length; i++) {
-            rpm[i] = ((DcMotorEx) motors[i]).getVelocity() / wheelTicksPerRev * 60;
+            rpm[i] = ((DcMotorEx) motors[i]).getVelocity() / driveWheelTicksPerRev * 60;
             telemetry.addData(WHEELS[i], "%.0f rpm", rpm[i]);
         }
 
