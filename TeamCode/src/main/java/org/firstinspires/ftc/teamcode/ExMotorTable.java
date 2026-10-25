@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
-
+/**
+ * This is a complex enum that stores hardware data about different kinds of motors.
+ * To add a new motor type, add an item before the semicolon that looks like this: `MOTOR_NAME(freeSpeedRpm, encoderResolution),`
+ * Talk to Owen or Ella about adding new parameters to the table.
+ */
 public enum ExMotorTable {
     //denoted as series then gearing ratio
     GOBILDA_6000_RPM (6000, 28.0), //5203 series, 1:1
