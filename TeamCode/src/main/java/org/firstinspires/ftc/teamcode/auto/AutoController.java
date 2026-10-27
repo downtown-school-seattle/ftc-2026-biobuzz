@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.NectarShooter;
+import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
@@ -31,7 +32,7 @@ abstract public class AutoController extends RobotController {
 
     protected double ticksPerInch = 40;
     protected double ticksPerDegree = 10;
-    protected double wheelTicksPerRev = 537.7;
+    protected double driveWheelTicksPerRev = MotorTable.GOBILDA_312_RPM.encoderResolution;
     protected double power = 0.5;
     protected int tolerance = 15;
     protected double moveTimeoutSeconds = 5;
@@ -45,11 +46,32 @@ abstract public class AutoController extends RobotController {
 
     @Override
     public void runOpMode() {
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         initRobotController();
 
         waitForStart();
         if (opModeIsActive()) runAuto();
+        setShooterRpm(0);
+        setIntakeRpm(0);
+    }
+
+    protected void drive(double degrees, double inches) {
+        run(driveCmd(degrees, inches));
+    }
+
+    protected void turn(double degrees) {
+        run(turnCmd(degrees));
+    }
+
+    protected AutoCommand driveCmd(double degrees, double inches) {
+        double radians = Math.toRadians(degrees);
+        double forward = Math.cos(radians) * inches * ticksPerInch;
+        double right = Math.sin(radians) * inches * ticksPerInch;
+        String name = "drive " + degrees + " deg " + inches + " in";
+        return new MoveCommand(name, wheelTargets(forward, right, 0));
+    }
+
+    protected AutoCommand turnCmd(double degrees) {
+        return new MoveCommand("turn " + degrees + " deg", wheelTargets(0, 0, degrees * ticksPerDegree));
     }
 
     // Drive in a line.
