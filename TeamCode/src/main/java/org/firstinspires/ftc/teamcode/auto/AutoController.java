@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
@@ -60,10 +61,13 @@ abstract public class AutoController extends RobotController {
         drive(0, 0, 0);
     }
 
-    /** Refactored from original MoveCommand */
-    private void turnForSeconds(boolean ccw, double seconds) {
+    /**
+     * Refactored from original MoveCommand.
+     * Call with Rotation.CCW or Rotation.CW to change the direction of motion.
+     */
+    protected void turnForSeconds(Rotation direction, double seconds) {
         // Turn on motors
-        drive(0, 0, ccw ? -driveSpeed : driveSpeed);
+        drive(0, 0, direction == Rotation.CCW ? -driveSpeed : driveSpeed);
 
         // Wait for seconds
         ElapsedTime timer = new ElapsedTime();
@@ -73,15 +77,5 @@ abstract public class AutoController extends RobotController {
 
         // Turn off motors
         drive(0, 0, 0);
-    }
-
-    /** Turn clockwise in place. */
-    protected void turnCwForSeconds(double seconds) {
-        turnForSeconds(false, seconds);
-    }
-
-    /** Turn counter-clockwise in place. */
-    protected void turnCcwForSeconds(double seconds) {
-        turnForSeconds(true, seconds);
     }
 }
