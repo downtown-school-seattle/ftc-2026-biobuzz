@@ -11,12 +11,8 @@ public class RedAutoMode extends AutoController {
 
     @Override
     protected void runAuto() {
-        drive(FORWARD, 1);
-        drive(LEFT, 1);
-        drive(BACK, 1);
-        drive(RIGHT, 1);
-        turn(-0.5);
-        turn(0.5);
-        run(motorCmd(shooterMotor, 4000), driveCmd(LEFT, 18));
+        driveForSeconds(FORWARD, .1);
+        driveForSeconds(RIGHT, .1);
+        turnCwForSeconds(0.25);
     }
 }

@@ -52,7 +52,7 @@ abstract public class RobotController extends LinearOpMode {
     public void initIntake(){
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void setShooterRpm(double rpm){
         MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, SHOOTER_MAX_RPM));

@@ -1,12 +1,7 @@
 package org.firstinspires.ftc.teamcode.auto;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.NectarShooter;
 import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
@@ -25,22 +20,12 @@ run(turnCmd(30), motorCmd(motor0e, 4000)) currently running a drive and turn com
 abstract public class AutoController extends RobotController {
     private static final double MIN_MOVING_RPM = 5;
 
-    public static final double FORWARD = 0;
-    public static final double RIGHT = 90;
-    public static final double BACK = 180;
-    public static final double LEFT = 270;
-
-    protected double ticksPerInch = 40;
-    protected double ticksPerDegree = 10;
+    public static final double FORWARD = 90;
+    public static final double RIGHT = 0;
+    public static final double BACK = 270;
+    public static final double LEFT = 180;
     protected double driveWheelTicksPerRev = MotorTable.GOBILDA_312_RPM.encoderResolution;
-    protected double power = 0.5;
-    protected int tolerance = 15;
-    protected double moveTimeoutSeconds = 5;
-
-    private static final double TELEMETRY_INTERVAL_MS = 50;
-
-    private final ElapsedTime telemetryTimer = new ElapsedTime();
-    private boolean telemetryDue;
+    protected double driveSpeed = 0.5;
 
     protected abstract void runAuto();
 
@@ -50,48 +35,24 @@ abstract public class AutoController extends RobotController {
 
         waitForStart();
         if (opModeIsActive()) runAuto();
+        drive(0, 0, 0);
         setShooterRpm(0);
         setIntakeRpm(0);
     }
 
-    protected void drive(double degrees, double inches) {
-        run(driveCmd(degrees, inches));
-    }
-
-    protected void turn(double degrees) {
-        run(turnCmd(degrees));
-    }
-
-    protected AutoCommand driveCmd(double degrees, double inches) {
-        double radians = Math.toRadians(degrees);
-        double forward = Math.cos(radians) * inches * ticksPerInch;
-        double right = Math.sin(radians) * inches * ticksPerInch;
-        String name = "drive " + degrees + " deg " + inches + " in";
-        return new MoveCommand(name, wheelTargets(forward, right, 0));
-    }
-
-    protected AutoCommand turnCmd(double degrees) {
-        return new MoveCommand("turn " + degrees + " deg", wheelTargets(0, 0, degrees * ticksPerDegree));
-    }
-
-    // Drive in a line.
-    protected void driveDistance(double degrees, double inches) {
-        // TODO: impl field relative
-        // We can't drive diagonally until field relative is implemented
-        // because of how mechanum wheels/encoders work.
-
-        // Turn to face the forward direction
-        turnDegrees(degrees);
-
+    /**
+     * Drive in a line.
+     * Refactored from original MoveCommand.
+     */
+    protected void driveForSeconds(double heading, double seconds) {
         // Turn on motors
-        drive(1, 0, 0);
+        double forward = Math.sin(heading) * driveSpeed;
+        double right = Math.cos(heading) * driveSpeed;
+        drive(forward, right, 0);
 
-        double encoderStart = frontLeftDrive.getCurrentPosition();
-        while (!equalWithTolerance(
-                frontLeftDrive.getCurrentPosition(),
-                encoderStart + inches * ticksPerInch,
-                0.1
-        )) {
+        // Wait for seconds
+        ElapsedTime timer = new ElapsedTime();
+        while (timer.seconds() < seconds) {
             idle();
         }
 
@@ -99,158 +60,28 @@ abstract public class AutoController extends RobotController {
         drive(0, 0, 0);
     }
 
-    // Turn in place.
-    protected void turnDegrees(double degrees) {
-        run(turnCmd(degrees));
+    /** Refactored from original MoveCommand */
+    private void turnForSeconds(boolean ccw, double seconds) {
+        // Turn on motors
+        drive(0, 0, ccw ? -driveSpeed : driveSpeed);
+
+        // Wait for seconds
+        ElapsedTime timer = new ElapsedTime();
+        while (timer.seconds() < seconds) {
+            idle();
+        }
+
+        // Turn off motors
+        drive(0, 0, 0);
     }
 
-//    protected AutoCommand driveCmd(double degrees, double inches) {
-//        double radians = Math.toRadians(degrees);
-//        double forward = Math.cos(radians) * inches * ticksPerInch;
-//        double right = Math.sin(radians) * inches * ticksPerInch;
-//        String name = "drive " + degrees + " deg " + inches + " in";
-//        return new MoveCommand(name, wheelTargets(forward, right, 0));
-//    }
-//
-//    protected AutoCommand turnCmd(double degrees) {
-//        return new MoveCommand("turn " + degrees + " deg", wheelTargets(0, 0, degrees * ticksPerDegree));
-//    }
-//
-//    private static double[] wheelTargets(double forward, double right, double turn) {
-//        return new double[]{forward + right - turn, forward + right + turn, right - forward - turn, right - forward + turn};
-//    }
-//
-//    protected AutoCommand motorCmd(DcMotorEx motor, double rpm) {
-//        return new MotorCommand(motor, rpm);
-//    }
-//
-//    protected void run(AutoCommand... commands) {
-//        int moves = 0;
-//        for (AutoCommand c : commands) if (c instanceof MoveCommand) moves++;
-//        if (moves > 1) throw new IllegalArgumentException("only one turn command can run in a group.");
-//
-//        for (AutoCommand c : commands) c.start();
-//        while (opModeIsActive()) {
-//            boolean allDone = true;
-//            for (AutoCommand c : commands) {
-//                if (c.isDone()) continue;
-//                c.update();
-//                allDone = false;
-//            }
-//            shooter.update();
-//            telemetryDue = telemetryTimer.milliseconds() >= TELEMETRY_INTERVAL_MS;
-//            if (telemetryDue) {
-//                telemetryTimer.reset();
-//                shooter.addTelemetry(telemetry);
-//                telemetry.update();
-//            }
-//            if (allDone) break;
-//            idle();
-//        }
-//        for (AutoCommand c : commands) c.end();
-//    }
-//
-//    private class MoveCommand implements AutoCommand {
-//        private final String name;
-//        private final double[] targets;
-//        private final ElapsedTime timer = new ElapsedTime();
-//        private boolean timedOut = false;
-//
-//        MoveCommand(String name, double... targets) {
-//            this.name = name;
-//            this.targets = targets;
-//        }
-//
-//        @Override
-//        public void start() {
-//            RobotLog.ii(TAG, "starting: " + name);
-//            DcMotor[] motors = wheels;
-//            double farthest = 0;
-//            for (double t : targets) farthest = Math.max(farthest, Math.abs(t));
-//            for (int i = 0; i < motors.length; i++) {
-//                motors[i].setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                motors[i].setTargetPosition((int) Math.round(targets[i]));
-//
-//                motors[i].setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//                motors[i].setPower(farthest == 0 ? 0 : power * Math.abs(targets[i]) / farthest);
-//            }
-//            timer.reset();
-//        }
-//
-//        @Override
-//        public void update() {
-//            if (timer.seconds() > moveTimeoutSeconds) {
-//                timedOut = true;
-//                RobotLog.ee(TAG, "timed out: " + name);
-//                return;
-//            }
-//            if (telemetryDue) addWheelTelemetry(wheels);
-//        }
-//
-//        @Override
-//        public boolean isDone() {
-//            return timedOut || reachedTargets(wheels);
-//        }
-//
-//        @Override
-//        public void end() {
-//            for (DcMotor m : wheels) {
-//                m.setPower(0);
-//                m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            }
-//            RobotLog.ii(TAG, "finished: " + name);
-//        }
-//    }
-//
-//    private class MotorCommand implements AutoCommand {
-//        private final DcMotorEx motor;
-//        private final double rpm;
-//
-//        MotorCommand(DcMotorEx motor, double rpm) {
-//            if (motor != nectarShooter) throw new IllegalArgumentException("motorCmd only supports nectarShooter");
-//            this.motor = motor;
-//            this.rpm = rpm;
-//        }
-//
-//        @Override
-//        public void start() {
-//            shooter.setRpm(rpm);
-//            RobotLog.ii(TAG, "nectar shooter set to " + rpm + " rpm");
-//        }
-//
-//        @Override
-//        public void update() {}
-//
-//        @Override
-//        public boolean isDone() {
-//            return true;
-//        }
-//
-//        @Override
-//        public void end() {}
-//    }
-//
-//    private void addWheelTelemetry(DcMotor[] motors) {
-//        double[] rpm = new double[motors.length];
-//        for (int i = 0; i < motors.length; i++) {
-//            rpm[i] = ((DcMotorEx) motors[i]).getVelocity() / wheelTicksPerRev * 60;
-//            telemetry.addData(WHEELS[i], "%.0f rpm", rpm[i]);
-//        }
-//
-//        double forward = (rpm[0] + rpm[1] - rpm[2] - rpm[3]) / 4;
-//        double right = (rpm[0] + rpm[1] + rpm[2] + rpm[3]) / 4;
-//        if (Math.hypot(forward, right) < MIN_MOVING_RPM) {
-//            telemetry.addData("direction", "-");
-//        } else {
-//            double degrees = (Math.toDegrees(Math.atan2(right, forward)) + 360) % 360;
-//            telemetry.addData("direction", "%.0f deg (0 forward, 90 right)", degrees);
-//        }
-//    }
+    /** Turn clockwise in place. */
+    protected void turnCwForSeconds(double seconds) {
+        turnForSeconds(false, seconds);
+    }
 
-//    private boolean reachedTargets(DcMotor[] motors) {
-//        for (DcMotor m : motors) {
-//            if (Math.abs(m.getTargetPosition() - m.getCurrentPosition()) > tolerance) return false;
-//        }
-//        return true;
-//    }
+    /** Turn counter-clockwise in place. */
+    protected void turnCcwForSeconds(double seconds) {
+        turnForSeconds(true, seconds);
+    }
 }
