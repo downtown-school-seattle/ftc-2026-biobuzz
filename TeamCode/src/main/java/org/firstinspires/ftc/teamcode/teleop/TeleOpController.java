@@ -26,6 +26,7 @@ abstract public class TeleOpController extends RobotController {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+            pinpoint.update();
             loopTeleOp();
             idle();
         }
