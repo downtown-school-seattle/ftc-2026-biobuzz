@@ -11,8 +11,8 @@ there are 3 commands that work in autonomous as well as a way to group them, the
 there is also run() that allows you to run multiple commands at a time however, they need to be written as "[command]Cmd"
 
 examples:
-driveDistance(90 [degrees], 12 [inches])
-turnDistance(45 [degrees])
+driveForSeconds(90 [degrees], 12 [seconds])
+turnForSeconds(Rotation.CW, 45 [seconds])
 motor(nectarShooter [motor name], 4200 [rpm])
 
 run(turnCmd(30), motorCmd(motor0e, 4000)) currently running a drive and turn command at the same time doesn't work but I am working on that right now
@@ -22,10 +22,10 @@ abstract public class AutoController extends RobotController {
     // todo: use this for pinpoint
     private static final double MIN_MOVING_RPM = 5;
 
-    public static final double FORWARD = 90;
-    public static final double RIGHT = 0;
-    public static final double BACK = 270;
-    public static final double LEFT = 180;
+    public static final double FORWARD = 0;
+    public static final double RIGHT = 90;
+    public static final double BACK = 180;
+    public static final double LEFT = 270;
     protected double driveSpeed = 0.5;
 
     protected abstract void runAuto();
@@ -45,8 +45,8 @@ abstract public class AutoController extends RobotController {
      */
     protected void driveForSeconds(double heading, double seconds) {
         // Turn on drive motors
-        double forward = Math.sin(heading) * driveSpeed;
-        double right = Math.cos(heading) * driveSpeed;
+        double forward = Math.cos(heading) * driveSpeed;
+        double right = Math.sin(heading) * driveSpeed;
         drive(forward, right, 0);
 
         // Wait for seconds
