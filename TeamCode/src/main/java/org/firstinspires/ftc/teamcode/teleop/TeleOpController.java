@@ -5,6 +5,13 @@ import org.firstinspires.ftc.teamcode.RobotController;
 abstract public class TeleOpController extends RobotController {
     private static final double RPM_STEP = 100;
 
+    public enum DriveMode {
+        FIELD_RELATIVE,
+        ROBOT_RELATIVE,
+        NO_OP
+    }
+    public DriveMode driveMode = DriveMode.FIELD_RELATIVE;
+
     protected void loopTeleOp() {
         if (gamepad1.leftBumperWasPressed()) changeShooterTarget(-RPM_STEP);
         if (gamepad1.rightBumperWasPressed()) changeShooterTarget(RPM_STEP);
@@ -20,7 +27,6 @@ abstract public class TeleOpController extends RobotController {
         telemetry.addData("shooter rpm", Math.round(getShooterRpm()));
         telemetry.update();
     }
-    public DriveMode driveMode = DriveMode.FIELD_RELATIVE;
 
     @Override
     public void runOpMode() {
