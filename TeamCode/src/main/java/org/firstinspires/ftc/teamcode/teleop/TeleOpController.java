@@ -9,9 +9,9 @@ abstract public class TeleOpController extends RobotController {
         if (gamepad1.leftBumperWasPressed()) changeShooterTarget(-RPM_STEP);
         if (gamepad1.rightBumperWasPressed()) changeShooterTarget(RPM_STEP);
 
-        if(driveMode == DriveMode.FIELD_RELATIVE){
+        if (driveMode == DriveMode.FIELD_RELATIVE) {
             driveFieldRelative(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
-        }else if(driveMode == DriveMode.ROBOT_RELATIVE){
+        } else if (driveMode == DriveMode.ROBOT_RELATIVE) {
             drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
         }
       
@@ -26,12 +26,12 @@ abstract public class TeleOpController extends RobotController {
     public void runOpMode() {
         initRobotController();
 
-        while (!isStarted()){
-            if(gamepad1.left_bumper && gamepad1.right_bumper){
+        while (!isStarted()) {
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
                 driveMode = DriveMode.NO_OP;
-            }else if(gamepad1.left_bumper){
+            } else if (gamepad1.left_bumper) {
                 driveMode = DriveMode.ROBOT_RELATIVE;
-            }else if(gamepad1.right_bumper){
+            } else if (gamepad1.right_bumper) {
                 driveMode = DriveMode.FIELD_RELATIVE;
             }
             telemetry.addLine("drive mode: " + driveMode);
