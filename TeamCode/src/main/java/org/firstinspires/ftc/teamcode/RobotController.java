@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
-    public PinpointOdometry odometry;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
@@ -26,7 +25,6 @@ abstract public class RobotController extends LinearOpMode {
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
-        odometry = new PinpointOdometry(pinpoint);
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -36,15 +34,23 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "2_back_left_drive");
         /// Port 3
         backRightDrive = hardwareMap.get(DcMotor.class, "3_back_right_drive");
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // TODO: replace encoder with pinpoint
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         initShooter();
         initIntake();
     }
+
+    public void stopMotors() {
+        stopDriveMotors();
+        intakeMotor.setPower(0);
+        shooterMotor.setPower(0);
+    }
+
     public void initShooter() {
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooter");
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -53,7 +59,7 @@ abstract public class RobotController extends LinearOpMode {
     public void initIntake(){
         intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
         intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
     public void setShooterRpm(double rpm){
         MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, SHOOTER_MAX_RPM));
@@ -92,15 +98,6 @@ abstract public class RobotController extends LinearOpMode {
     /** Return which bot we are running on. */
     protected BotIdentity getIdentity() {
         throw new UnsupportedOperationException("not yet");
-    }
-
-    /** Switch a constant between two values based on what robot we are running this on. */
-    protected final <T> T switchOnBot(T bernardValue, T gladysValue) {
-        switch (getIdentity()) {
-            case Bernard: return bernardValue;
-            case Gladys: return gladysValue;
-        }
-        throw new Error("Constant not defined for bot identity.");
     }
 
     //pinpoint sensor stuff below
@@ -144,4 +141,24 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
+
+    public void stopDriveMotors() {
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+    }
+
+    //<editor-fold desc="Math utilities">
+
+    /** Returns true if {@param a} is within {@param tolerace} units of {@param b} */
+    public boolean equalWithTolerance(double a, double b, double tolerance) {
+        return Math.abs(a - b) < tolerance;
+    }
+    /** Returns true if {@param a} is within {@param tolerace} units of {@param b} */
+    public boolean equalWithTolerance(float a, float b, float tolerance) {
+        return Math.abs(a - b) < tolerance;
+    }
+
+    //</editor-fold>
 }
