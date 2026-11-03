@@ -44,6 +44,13 @@ abstract public class RobotController extends LinearOpMode {
         initShooter();
         initIntake();
     }
+
+    public void stopMotors() {
+        stopDriveMotors();
+        intakeMotor.setPower(0);
+        shooterMotor.setPower(0);
+    }
+
     public void initShooter() {
         shooterMotor = hardwareMap.get(DcMotorEx.class, "shooter");
         shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -93,15 +100,6 @@ abstract public class RobotController extends LinearOpMode {
         throw new UnsupportedOperationException("not yet");
     }
 
-    /** Switch a constant between two values based on what robot we are running this on. */
-    protected final <T> T switchOnBot(T bernardValue, T gladysValue) {
-        switch (getIdentity()) {
-            case Bernard: return bernardValue;
-            case Gladys: return gladysValue;
-        }
-        throw new Error("Constant not defined for bot identity.");
-    }
-
     //pinpoint sensor stuff below
     public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
@@ -142,6 +140,13 @@ abstract public class RobotController extends LinearOpMode {
         frontRightDrive.setPower(maxSpeed * (frontRightPower / maxPower));
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
+    }
+
+    public void stopDriveMotors() {
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
     }
 
     //<editor-fold desc="Math utilities">

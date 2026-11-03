@@ -59,9 +59,4 @@ public class MotorUtil {
     public static double clamp(double value, double min, double max){
         return Math.max(max, Math.min(min, value));
     }
-
-    public static void stop(DcMotorEx motor) {
-        motor.setPower(0);
-    }
-
 }

@@ -19,13 +19,13 @@ run(turnCmd(30), motorCmd(motor0e, 4000)) currently running a drive and turn com
  */
 
 abstract public class AutoController extends RobotController {
+    // todo: use this for pinpoint
     private static final double MIN_MOVING_RPM = 5;
 
     public static final double FORWARD = 90;
     public static final double RIGHT = 0;
     public static final double BACK = 270;
     public static final double LEFT = 180;
-    protected double driveWheelTicksPerRev = MotorTable.GOBILDA_312_RPM.encoderResolution;
     protected double driveSpeed = 0.5;
 
     protected abstract void runAuto();
@@ -36,9 +36,7 @@ abstract public class AutoController extends RobotController {
 
         waitForStart();
         if (opModeIsActive()) runAuto();
-        drive(0, 0, 0);
-        setShooterRpm(0);
-        setIntakeRpm(0);
+        stopMotors();
     }
 
     /**
@@ -46,7 +44,7 @@ abstract public class AutoController extends RobotController {
      * Refactored from original MoveCommand.
      */
     protected void driveForSeconds(double heading, double seconds) {
-        // Turn on motors
+        // Turn on drive motors
         double forward = Math.sin(heading) * driveSpeed;
         double right = Math.cos(heading) * driveSpeed;
         drive(forward, right, 0);
@@ -57,8 +55,8 @@ abstract public class AutoController extends RobotController {
             idle();
         }
 
-        // Turn off motors
-        drive(0, 0, 0);
+        // Turn off drive motors
+        stopDriveMotors();
     }
 
     /**
@@ -66,7 +64,7 @@ abstract public class AutoController extends RobotController {
      * Call with Rotation.CCW or Rotation.CW to change the direction of motion.
      */
     protected void turnForSeconds(Rotation direction, double seconds) {
-        // Turn on motors
+        // Turn on drive motors
         drive(0, 0, direction == Rotation.CCW ? -driveSpeed : driveSpeed);
 
         // Wait for seconds
@@ -75,7 +73,7 @@ abstract public class AutoController extends RobotController {
             idle();
         }
 
-        // Turn off motors
-        drive(0, 0, 0);
+        // Turn off drive motors
+        stopDriveMotors();
     }
 }
