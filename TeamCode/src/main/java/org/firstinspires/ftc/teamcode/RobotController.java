@@ -5,9 +5,11 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
-    public PinpointOdometry odometry;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
@@ -17,7 +19,7 @@ abstract public class RobotController extends LinearOpMode {
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
-        odometry = new PinpointOdometry(pinpoint);
+        configurePinpoint();
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -33,7 +35,7 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        initNectarShooter();
+        //initNectarShooter();
     }
 
     public void initNectarShooter() {
@@ -81,6 +83,17 @@ abstract public class RobotController extends LinearOpMode {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
+    }
+
+    public void driveFieldRelative(double forward, double right, double spin){
+        double intendedDirection = Math.atan2(right, forward);
+        double magnitude = Math.sqrt(right * right + forward * forward);
+        double realDirection = intendedDirection - pinpoint.getHeading(AngleUnit.RADIANS);
+        drive(
+                Math.cos(realDirection) * magnitude,
+                -Math.sin(realDirection) * magnitude,
+                spin
+        );
     }
 
     // Thanks to FTC16072 for sharing this code!!

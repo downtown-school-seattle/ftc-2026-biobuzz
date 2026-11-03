@@ -9,20 +9,39 @@ abstract public class TeleOpController extends RobotController {
 
     protected NectarShooter shooter;
 
-    protected void loopTeleOp() {
-        drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+    public enum DriveMode{
+        ROBOT_RELATIVE,
+        FIELD_RELATIVE,
+        NO_OP;
     }
+    public DriveMode driveMode = DriveMode.FIELD_RELATIVE;
 
     @Override
     public void runOpMode() {
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         initRobotController();
-        waitForStart();
-        while (!isStopRequested()) loopIteration();
+        while (!isStarted()){
+            if(gamepad1.left_bumper && gamepad1.right_bumper){
+                driveMode = DriveMode.NO_OP;
+            }else if(gamepad1.left_bumper){
+                driveMode = DriveMode.ROBOT_RELATIVE;
+            }else if(gamepad1.right_bumper){
+                driveMode = DriveMode.FIELD_RELATIVE;
+            }
+            telemetry.addLine("drive mode: " + driveMode);
+            telemetry.update();
+        }
+        while (!isStopRequested()) {
+            pinpoint.update();
+            loopIteration();
+        }
     }
 
     private void loopIteration() {
-        drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
-
+        if(driveMode == DriveMode.FIELD_RELATIVE){
+            driveFieldRelative(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
+        }else if(driveMode == DriveMode.ROBOT_RELATIVE){
+            drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
+        }
     }
 }

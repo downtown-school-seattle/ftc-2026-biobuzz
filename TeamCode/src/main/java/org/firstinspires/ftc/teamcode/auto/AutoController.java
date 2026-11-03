@@ -47,6 +47,8 @@ abstract public class AutoController extends RobotController {
 
     abstract public AllianceColor getAllianceColor();
 
+
+
     protected void runAuto() {}
 
     @Override
