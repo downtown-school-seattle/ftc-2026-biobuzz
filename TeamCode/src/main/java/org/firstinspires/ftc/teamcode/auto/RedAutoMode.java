@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
+
 @Autonomous(name="Red Auto", group="Robot")
 public class RedAutoMode extends AutoController {
     @Override
@@ -11,12 +13,8 @@ public class RedAutoMode extends AutoController {
 
     @Override
     protected void runAuto() {
-        drive(FORWARD, 1);
-        drive(LEFT, 1);
-        drive(BACK, 1);
-        drive(RIGHT, 1);
-        turn(-0.5);
-        turn(0.5);
-        run(motorCmd(shooterMotor, 4000), driveCmd(LEFT, 18));
+        driveForSeconds(FORWARD, .1);
+        driveForSeconds(RIGHT, .1);
+        turnForSeconds(Rotation.CW, 0.25);
     }
 }
