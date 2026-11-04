@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
@@ -13,12 +14,19 @@ abstract public class RobotController extends LinearOpMode {
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
     public DcMotor backRightDrive;
-    public DcMotorEx nectarShooter;
+    public DcMotorEx shooterMotor;
+    public DcMotorEx intakeMotor;
+
+    public static final MotorTable SHOOTER_SPEC = MotorTable.GOBILDA_6000_RPM;
+    public static final MotorTable INTAKE_SPEC = MotorTable.GOBILDA_1620_RPM;
+    public static final double SHOOTER_MAX_RPM = 4500;
+    public static final double INTAKE_MAX_RPM = 1000;
+    protected double shooterTargetRpm = 4200;
 
     public void initRobotController() {
-
-//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-//        configurePinpoint();
+        // I2C (intra-integrated circuit) Port 0
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        configurePinpoint();
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -28,19 +36,52 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "2_back_left_drive");
         /// Port 3
         backRightDrive = hardwareMap.get(DcMotor.class, "3_back_right_drive");
-        frontLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        // TODO: replace encoder with pinpoint
+        frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        initNectarShooter();
+        initShooter();
+        initIntake();
     }
 
-    public void initNectarShooter() {
-        /// Expansion hub port 0
-        nectarShooter = hardwareMap.get(DcMotorEx.class, "0e_nectar_shooter");
+    public void stopMotors() {
+        stopDriveMotors();
+        intakeMotor.setPower(0);
+        shooterMotor.setPower(0);
     }
+
+    public void initShooter() {
+        shooterMotor = hardwareMap.get(DcMotorEx.class, "shooter");
+        shooterMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        shooterMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void initIntake(){
+        intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
+        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+    public void setShooterRpm(double rpm){
+        MotorUtil.setRpm(shooterMotor, SHOOTER_SPEC, MotorUtil.clamp(rpm, SHOOTER_MAX_RPM));
+    }
+    public void setIntakeRpm(double rpm){
+        MotorUtil.setRpm(intakeMotor, INTAKE_SPEC, MotorUtil.clamp(rpm, INTAKE_MAX_RPM));
+    }
+
+    public double getShooterRpm() {return MotorUtil.getMeasuredRpm(shooterMotor, SHOOTER_SPEC);}
+    public double getIntakeRpm() {return MotorUtil.getMeasuredRpm(intakeMotor, INTAKE_SPEC);}
+
+    /**
+     * changes the shooter target based off the current target,
+     * defined in RobotController as ShooterTargetRpm
+     * @param delta the amount to change by, can be positive or negative
+     */
+    protected void changeShooterTarget(double delta){
+        shooterTargetRpm = MotorUtil.clamp(shooterTargetRpm + delta, SHOOTER_MAX_RPM);
+    }
+
 
     /** Enum representing our color. */
     public enum AllianceColor {
@@ -57,7 +98,7 @@ abstract public class RobotController extends LinearOpMode {
     abstract public AllianceColor getAllianceColor();
 
     /** Return which bot we are running on. */
-    BotIdentity getIdentity() {
+    protected BotIdentity getIdentity() {
         throw new UnsupportedOperationException("not yet");
     }
 
@@ -70,6 +111,7 @@ abstract public class RobotController extends LinearOpMode {
         throw new Error("Constant not defined for bot identity.");
     }
 
+
     //pinpoint sensor stuff below
     public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
@@ -81,6 +123,17 @@ abstract public class RobotController extends LinearOpMode {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
+    }
+
+    public void driveFieldRelative(double forward, double right, double spin){
+        double intendedDirection = Math.atan2(right, forward);
+        double magnitude = Math.sqrt(right * right + forward * forward);
+        double realDirection = intendedDirection - pinpoint.getHeading(AngleUnit.RADIANS);
+        drive(
+                Math.cos(realDirection) * magnitude,
+                -Math.sin(realDirection) * magnitude,
+                spin
+        );
     }
 
     // Thanks to FTC16072 for sharing this code!!
@@ -111,4 +164,24 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive.setPower(maxSpeed * (backLeftPower / maxPower));
         backRightDrive.setPower(maxSpeed * (backRightPower / maxPower));
     }
+
+    public void stopDriveMotors() {
+        frontLeftDrive.setPower(0);
+        frontRightDrive.setPower(0);
+        backLeftDrive.setPower(0);
+        backRightDrive.setPower(0);
+    }
+
+    //<editor-fold desc="Math utilities">
+
+    /** Returns true if {@param a} is within {@param tolerace} units of {@param b} */
+    public boolean equalWithTolerance(double a, double b, double tolerance) {
+        return Math.abs(a - b) < tolerance;
+    }
+    /** Returns true if {@param a} is within {@param tolerace} units of {@param b} */
+    public boolean equalWithTolerance(float a, float b, float tolerance) {
+        return Math.abs(a - b) < tolerance;
+    }
+
+    //</editor-fold>
 }
