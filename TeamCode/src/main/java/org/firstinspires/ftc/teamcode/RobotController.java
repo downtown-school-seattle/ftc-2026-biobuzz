@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
@@ -25,6 +26,7 @@ abstract public class RobotController extends LinearOpMode {
     public void initRobotController() {
         // I2C (intra-integrated circuit) Port 0
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        configurePinpoint();
 
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
@@ -100,6 +102,16 @@ abstract public class RobotController extends LinearOpMode {
         throw new UnsupportedOperationException("not yet");
     }
 
+    /** Switch a constant between two values based on what robot we are running this on. */
+    protected final <T> T switchOnBot(T bernardValue, T gladysValue) {
+        switch (getIdentity()) {
+            case Bernard: return bernardValue;
+            case Gladys: return gladysValue;
+        }
+        throw new Error("Constant not defined for bot identity.");
+    }
+
+
     //pinpoint sensor stuff below
     public void configurePinpoint() {
         //change to desired value: x offset is how far right and left you put the sensor on the robot and y is forward and back on the robot
@@ -111,6 +123,17 @@ abstract public class RobotController extends LinearOpMode {
                 GoBildaPinpointDriver.EncoderDirection.FORWARD);
         //does something important before starting the robot
         pinpoint.resetPosAndIMU();
+    }
+
+    public void driveFieldRelative(double forward, double right, double spin){
+        double intendedDirection = Math.atan2(right, forward);
+        double magnitude = Math.sqrt(right * right + forward * forward);
+        double realDirection = intendedDirection - pinpoint.getHeading(AngleUnit.RADIANS);
+        drive(
+                Math.cos(realDirection) * magnitude,
+                -Math.sin(realDirection) * magnitude,
+                spin
+        );
     }
 
     // Thanks to FTC16072 for sharing this code!!

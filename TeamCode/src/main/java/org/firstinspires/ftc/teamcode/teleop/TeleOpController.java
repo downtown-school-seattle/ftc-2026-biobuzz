@@ -7,10 +7,18 @@ abstract public class TeleOpController extends RobotController {
     public double leftY;
     public double leftX;
     public double rightX;
+
+    public enum DriveMode {
+        FIELD_RELATIVE,
+        ROBOT_RELATIVE,
+        NO_OP
+    }
+    public DriveMode driveMode = DriveMode.FIELD_RELATIVE;
+
     protected void loopTeleOp() {
         if (gamepad1.leftBumperWasPressed()) changeShooterTarget(-RPM_STEP);
         if (gamepad1.rightBumperWasPressed()) changeShooterTarget(RPM_STEP);
-
+      
         setShooterRpm(shooterTargetRpm);
         if(gamepad1.left_stick_y > 0.2 || gamepad1.left_stick_y < -0.2){
             leftY = gamepad1.left_stick_y;
@@ -35,7 +43,12 @@ abstract public class TeleOpController extends RobotController {
             leftY /= 2;
             leftX /= 2;
         }
-        drive(-leftY, leftX, rightX);
+
+        if (driveMode == DriveMode.FIELD_RELATIVE) {
+            driveFieldRelative(-leftY, -leftX, rightX);
+        } else if (driveMode == DriveMode.ROBOT_RELATIVE) {
+            drive(-leftY, leftX, rightX);
+        }
 
         if(gamepad1.a){
             pinpoint.resetPosAndIMU();
@@ -51,7 +64,17 @@ abstract public class TeleOpController extends RobotController {
     public void runOpMode() {
         initRobotController();
 
-        waitForStart();
+        while (!isStarted()) {
+            if (gamepad1.left_bumper && gamepad1.right_bumper) {
+                driveMode = DriveMode.NO_OP;
+            } else if (gamepad1.left_bumper) {
+                driveMode = DriveMode.ROBOT_RELATIVE;
+            } else if (gamepad1.right_bumper) {
+                driveMode = DriveMode.FIELD_RELATIVE;
+            }
+            telemetry.addLine("drive mode: " + driveMode);
+            telemetry.update();
+        }
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
