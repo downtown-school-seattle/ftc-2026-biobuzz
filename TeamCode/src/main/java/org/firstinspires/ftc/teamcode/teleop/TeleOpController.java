@@ -51,6 +51,6 @@ abstract public class TeleOpController extends RobotController {
             idle();
         }
 
-        stopMotors();
+        turnOff();
     }
 }
