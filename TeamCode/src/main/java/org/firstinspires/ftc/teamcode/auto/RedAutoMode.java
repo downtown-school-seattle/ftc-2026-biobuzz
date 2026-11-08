@@ -14,7 +14,7 @@ public class RedAutoMode extends AutoController {
     @Override
     protected void runAuto() {
         driveForSeconds(FORWARD, .1);
-        driveForSeconds(RIGHT, .1);
-        turnForSeconds(Rotation.CW, 0.25);
+//        driveForSeconds(RIGHT, .1);
+//        turnForSeconds(Rotation.CW, 0.25);
     }
 }
