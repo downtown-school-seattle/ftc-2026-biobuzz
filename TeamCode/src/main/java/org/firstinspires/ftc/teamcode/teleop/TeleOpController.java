@@ -50,13 +50,21 @@ abstract public class TeleOpController extends RobotController {
             drive(-leftY, leftX, rightX);
         }
 
-        if(gamepad1.a){
+        if(gamepad1.a && driveMode == DriveMode.FIELD_RELATIVE){
             pinpoint.resetPosAndIMU();
             telemetry.addLine("reset field relative");
         }
 
+        if(gamepad1.dpad_down){
+            driveMode = DriveMode.ROBOT_RELATIVE;
+        }
+        if(gamepad1.dpad_up){
+            driveMode = DriveMode.FIELD_RELATIVE;
+        }
+
         telemetry.addData("shooter target", Math.round(shooterTargetRpm));
         telemetry.addData("shooter rpm", Math.round(getShooterRpm()));
+        telemetry.addData("current drive mode", driveMode);
         telemetry.update();
     }
 
