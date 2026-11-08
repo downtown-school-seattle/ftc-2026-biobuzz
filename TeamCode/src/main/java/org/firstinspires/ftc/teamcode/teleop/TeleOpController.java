@@ -10,7 +10,7 @@ abstract public class TeleOpController extends RobotController {
         ROBOT_RELATIVE,
         NO_OP
     }
-    public DriveMode driveMode = DriveMode.FIELD_RELATIVE;
+    public DriveMode driveMode = DriveMode.ROBOT_RELATIVE;
 
     protected void loopTeleOp() {
         double intakeTarget = 0;
@@ -52,7 +52,7 @@ abstract public class TeleOpController extends RobotController {
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
-            pinpoint.update();
+            if (pinpoint != null) pinpoint.update();
             loopTeleOp();
             idle();
         }
