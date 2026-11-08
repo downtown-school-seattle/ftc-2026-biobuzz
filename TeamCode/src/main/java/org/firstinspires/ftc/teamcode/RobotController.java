@@ -30,9 +30,9 @@ abstract public class RobotController extends LinearOpMode {
         // I2C (intra-integrated circuit) Port 0
         // pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
         // configurePinpoint();
-
+      
         shooterGate = hardwareMap.get(Servo.class, "s0_shooter_gate");
-
+      
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
         /// Port 1
