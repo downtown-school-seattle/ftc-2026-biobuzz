@@ -13,7 +13,7 @@ public class RedAutoMode extends AutoController {
 
     @Override
     protected void runAuto() {
-        driveForSeconds(FORWARD, .1);
+        driveForSeconds(45, .2);
 //        driveForSeconds(RIGHT, .1);
 //        turnForSeconds(Rotation.CW, 0.25);
     }
