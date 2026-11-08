@@ -83,6 +83,7 @@ abstract public class TeleOpController extends RobotController {
             telemetry.addLine("drive mode: " + driveMode);
             telemetry.update();
         }
+
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
