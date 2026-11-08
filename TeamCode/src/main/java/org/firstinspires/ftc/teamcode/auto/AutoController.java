@@ -36,7 +36,7 @@ abstract public class AutoController extends RobotController {
 
         waitForStart();
         if (opModeIsActive()) runAuto();
-        stopMotors();
+        turnOff();
     }
 
     /**
@@ -75,5 +75,21 @@ abstract public class AutoController extends RobotController {
 
         // Turn off drive motors
         stopDriveMotors();
+    }
+
+    protected void shooterGateOpen(boolean open) {
+        if(open) {
+            shooterGate.setPosition(0);
+        } else {
+            shooterGate.setPosition(.15);
+        }
+    }
+
+    protected void waitMs(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            // do nothing
+        }
     }
 }

@@ -4,12 +4,15 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 abstract public class RobotController extends LinearOpMode {
     public GoBildaPinpointDriver pinpoint;
+    public Servo shooterGate;
     public DcMotor frontLeftDrive;
     public DcMotor frontRightDrive;
     public DcMotor backLeftDrive;
@@ -27,7 +30,9 @@ abstract public class RobotController extends LinearOpMode {
         // I2C (intra-integrated circuit) Port 0
         // pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
         // configurePinpoint();
-
+      
+        shooterGate = hardwareMap.get(Servo.class, "s0_shooter_gate");
+      
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
         /// Port 1
@@ -45,12 +50,14 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         initShooter();
         initIntake();
+        turnOff();
     }
 
-    public void stopMotors() {
+    public void turnOff() {
         stopDriveMotors();
         intakeMotor.setPower(0);
         shooterMotor.setPower(0);
+        shooterGate.setPosition(.15);
     }
 
     public void initShooter() {

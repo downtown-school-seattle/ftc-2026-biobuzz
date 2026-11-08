@@ -1,0 +1,19 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 11
+}
+
+application {
+    mainClass = 'biobuzz.patheditor.Main'
+}
+
+tasks.named('run') {
+    workingDir = projectDir
+}
