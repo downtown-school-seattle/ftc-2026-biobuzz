@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
-import org.firstinspires.ftc.teamcode.MotorTable;
 import org.firstinspires.ftc.teamcode.RobotController;
 
 /*
@@ -32,7 +31,7 @@ abstract public class AutoController extends RobotController {
 
     @Override
     public void runOpMode() {
-        initRobotController();
+        initRobot();
 
         waitForStart();
         if (opModeIsActive()) runAuto();

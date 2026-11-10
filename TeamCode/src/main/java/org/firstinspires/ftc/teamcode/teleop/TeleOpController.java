@@ -30,7 +30,7 @@ abstract public class TeleOpController extends RobotController {
 
     @Override
     public void runOpMode() {
-        initRobotController();
+        initRobot();
 
         while (!isStarted()) {
             if (gamepad1.left_bumper && gamepad1.right_bumper) {
