@@ -31,8 +31,6 @@ abstract public class AutoController extends RobotController {
 
     @Override
     public void runOpMode() {
-        initRobot();
-
         waitForStart();
         if (opModeIsActive()) runAuto();
         stopMotors();
