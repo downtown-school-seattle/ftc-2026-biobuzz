@@ -17,7 +17,7 @@ abstract public class TeleOpController extends RobotController {
         if (gamepad1.rightBumperWasPressed()) changeShooterTarget(RPM_STEP);
 
         if (driveMode == DriveMode.FIELD_RELATIVE) {
-            driveFieldRelative(-gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
+            driveFieldRelative(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         } else if (driveMode == DriveMode.ROBOT_RELATIVE) {
             drive(-gamepad1.left_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x);
         }

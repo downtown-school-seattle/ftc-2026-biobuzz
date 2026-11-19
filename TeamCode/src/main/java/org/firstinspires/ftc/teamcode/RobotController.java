@@ -126,7 +126,7 @@ abstract public class RobotController extends LinearOpMode {
     }
 
     public void driveFieldRelative(double forward, double right, double spin){
-        double intendedDirection = Math.atan2(right, forward);
+        double intendedDirection = Math.atan2(-right, forward);
         double magnitude = Math.sqrt(right * right + forward * forward);
         double realDirection = intendedDirection - pinpoint.getHeading(AngleUnit.RADIANS);
         drive(
