@@ -23,11 +23,14 @@ abstract public class RobotController extends LinearOpMode {
     public static final double INTAKE_MAX_RPM = 1000;
     protected double shooterTargetRpm = 4200;
 
-    public void initRobotController() {
-        // I2C (intra-integrated circuit) Port 0
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
-        configurePinpoint();
+    public void initRobot() {
+        initDrive();
+        initPinpoint();
+        initShooter();
+        initIntake();
+    }
 
+    public void initDrive() {
         /// Port 0
         frontLeftDrive = hardwareMap.get(DcMotor.class, "0_front_left_drive");
         /// Port 1
@@ -36,6 +39,8 @@ abstract public class RobotController extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "2_back_left_drive");
         /// Port 3
         backRightDrive = hardwareMap.get(DcMotor.class, "3_back_right_drive");
+
+
         // TODO: replace encoder with pinpoint
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -43,8 +48,12 @@ abstract public class RobotController extends LinearOpMode {
         backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        initShooter();
-        initIntake();
+    }
+
+    public void initPinpoint() {
+        // I2C (intra-integrated circuit) Port 0
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "ii0_pinpoint_sensor");
+        configurePinpoint();
     }
 
     public void stopMotors() {

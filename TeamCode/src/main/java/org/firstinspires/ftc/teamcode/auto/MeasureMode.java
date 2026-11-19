@@ -16,7 +16,7 @@ public class MeasureMode extends RobotController {
 
     @Override
     public void runOpMode() {
-        initRobotController();
+        initRobot();
         telemetry.addLine("Selected measure mode. This mode is meant for testing purposes.");
         telemetry.update();
         waitForStart();
